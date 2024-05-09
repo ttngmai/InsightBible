@@ -2,9 +2,15 @@
   "name": "my-bible",
   "version": "1.0.0",
   "description": "An Electron application with React and TypeScript",
+  "type": "module",
   "main": "./out/main/index.js",
   "author": "example.com",
   "homepage": "https://electron-vite.org",
+  "babelMacros": {
+    "twin": {
+      "preset": "styled-components"
+    }
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
@@ -29,6 +35,7 @@
     "better-sqlite3": "^9.6.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "electron-store": "^9.0.0",
     "jotai": "^2.8.0",
     "postcss-import": "^16.1.0",
     "react-color": "^2.19.3",

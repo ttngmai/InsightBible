@@ -1,18 +1,18 @@
 import {
-  bibleBackgroundColorAtom,
-  bibleTextColorAtom,
-  fontSizeAtom,
-  selectedItemAtom,
-  verseAtom
+  readWriteBibleBackgroundColorAtom,
+  readWriteBibleDataAtom,
+  readWriteBibleTextColorAtom,
+  readWriteBookAtom,
+  readWriteChapterAtom,
+  readWriteFontSizeAtom,
+  readWriteVerseAtom
 } from '@renderer/store'
-import { TBible } from '@shared/models'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { bibleCountInfo } from '@shared/constants'
+import { useAtom, useAtomValue } from 'jotai'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import tw, { TwStyle } from 'twin.macro'
 
 type BibleAreaProps = {
-  bibleData?: TBible[]
-  lastVerse?: number
   sx?: TwStyle
 }
 
@@ -32,20 +32,20 @@ const BibleText = forwardRef<HTMLDivElement, BibleTextProps>(({ verse, btext, te
 })
 BibleText.displayName = 'BibleText'
 
-function BibleArea({ bibleData = [], lastVerse = 0, sx }: BibleAreaProps): JSX.Element | null {
-  const selectedItem = useAtomValue(selectedItemAtom)
-  const fontSize = useAtomValue(fontSizeAtom)
-  const bibleBackgroundColor = useAtomValue(bibleBackgroundColorAtom)
-  const bibleTextColor = useAtomValue(bibleTextColorAtom)
+function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
+  const wrapperRef = useRef<HTMLDivElement>(null) // 최상단 Div 요소의 참조 리스트
+  const verseRefs = useRef<null[] | HTMLElement[]>([]) // 각 절 HTML 요소의 참조 리스트
 
-  // 최상단 Div 요소의 참조 리스트
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  // 각 절 HTML 요소의 참조 리스트
-  const verseRefs = useRef<null[] | HTMLElement[]>([])
+  const fontSize = useAtomValue(readWriteFontSizeAtom)
+  const bibleBackgroundColor = useAtomValue(readWriteBibleBackgroundColorAtom)
+  const bibleTextColor = useAtomValue(readWriteBibleTextColorAtom)
+  const book = useAtomValue(readWriteBookAtom)
+  const chapter = useAtomValue(readWriteChapterAtom)
+  const [verse, setVerse] = useAtom(readWriteVerseAtom)
+  const bibleData = useAtomValue(readWriteBibleDataAtom)
 
-  const setVerse = useSetAtom(verseAtom)
-  // 화면에 보이는 절 숫자 리스트
-  const [visibleVerseList, setVisibleVerseList] = useState<number[]>([])
+  const [lastVerse, setLastVerse] = useState<number>(0)
+  const [visibleVerseList, setVisibleVerseList] = useState<number[]>([]) // 화면에 보이는 절 숫자 리스트
 
   // 각 절 렌더링
   const renderVerseList = (): JSX.Element[] => {
@@ -110,11 +110,29 @@ function BibleArea({ bibleData = [], lastVerse = 0, sx }: BibleAreaProps): JSX.E
   // 옵저버
   const observer = new IntersectionObserver(handleObserver, { threshold: 0.5 })
 
+  useEffect(() => {
+    setLastVerse(
+      bibleCountInfo.filter((el) => el.book === book).filter((el) => el.chapter === chapter)[0]
+        .lastVerse || 0
+    )
+  }, [book, chapter])
+
   // 각 절에 옵저버 적용
+  // "장 이동", "성경찾기" 등의 기능 사용 시, 선택한 절이 최상단에 보이도록 처리
   useEffect(() => {
     verseRefs.current.forEach((el) => {
       if (el instanceof HTMLElement) observer.observe(el)
     })
+
+    if (bibleData.length > 0) {
+      const currentVerseRef = verseRefs.current
+        .filter((el) => el instanceof HTMLElement)
+        .find((el) => Number(el.dataset.verse) === verse)
+
+      if (currentVerseRef) {
+        currentVerseRef.scrollIntoView(true)
+      }
+    }
 
     return () => {
       observer.disconnect()
@@ -128,19 +146,6 @@ function BibleArea({ bibleData = [], lastVerse = 0, sx }: BibleAreaProps): JSX.E
       setVerse(topMostVisibleVerse || lastVerse)
     }
   }, [bibleData, visibleVerseList])
-
-  // "장 이동", "성경찾기" 등의 기능 사용 시, 선택한 절이 최상단에 보이도록 처리
-  useEffect(() => {
-    if (bibleData.length > 0 && selectedItem) {
-      const currentVerseRef = verseRefs.current
-        .filter((el) => el instanceof HTMLElement)
-        .find((el) => Number(el.dataset.verse) === selectedItem.verse)
-
-      if (currentVerseRef) {
-        currentVerseRef.scrollIntoView(true)
-      }
-    }
-  }, [bibleData, selectedItem])
 
   if (bibleData.length === 0) return null
 

@@ -1,17 +1,18 @@
 import {
-  commentaryBackgroundColorAtom,
-  commentaryTextColorAtom,
-  fontSizeAtom,
-  verseAtom
+  readWriteBookAtom,
+  readWriteChapterAtom,
+  readWriteCommentaryBackgroundColorAtom,
+  readWriteCommentaryDataAtom,
+  readWriteCommentaryTextColor,
+  readWriteFontSizeAtom,
+  readWriteVerseAtom
 } from '@renderer/store'
-import { TCommentary } from '@shared/models'
+import { bibleCountInfo } from '@shared/constants'
 import { useAtomValue } from 'jotai'
-import { forwardRef, useEffect, useRef } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import tw, { TwStyle } from 'twin.macro'
 
 type CommentaryAreaProps = {
-  commentaryData?: TCommentary[]
-  lastVerse?: number
   sx?: TwStyle
 }
 
@@ -33,18 +34,18 @@ const CommentaryText = forwardRef<HTMLDivElement, CommentaryTextProps>(
 )
 CommentaryText.displayName = 'CommentaryText'
 
-function CommentaryArea({
-  commentaryData = [],
-  lastVerse = 0,
-  sx
-}: CommentaryAreaProps): JSX.Element | null {
-  // 각 주석 HTML 요소의 참조 리스트
-  const verseRefs = useRef<null[] | HTMLDivElement[]>([])
+function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
+  const verseRefs = useRef<null[] | HTMLDivElement[]>([]) // 각 주석 HTML 요소의 참조 리스트
 
-  const currentBibleVerse = useAtomValue(verseAtom)
-  const fontSize = useAtomValue(fontSizeAtom)
-  const commentaryBackgroundColor = useAtomValue(commentaryBackgroundColorAtom)
-  const commentaryTextColor = useAtomValue(commentaryTextColorAtom)
+  const currentBibleVerse = useAtomValue(readWriteVerseAtom)
+  const fontSize = useAtomValue(readWriteFontSizeAtom)
+  const commentaryBackgroundColor = useAtomValue(readWriteCommentaryBackgroundColorAtom)
+  const commentaryTextColor = useAtomValue(readWriteCommentaryTextColor)
+  const book = useAtomValue(readWriteBookAtom)
+  const chapter = useAtomValue(readWriteChapterAtom)
+  const commentaryData = useAtomValue(readWriteCommentaryDataAtom)
+
+  const [lastVerse, setLastVerse] = useState<number>(0)
 
   // 각 주석 렌더링
   const renderVerseList = (): JSX.Element[] => {
@@ -91,6 +92,13 @@ function CommentaryArea({
 
     return result
   }
+
+  useEffect(() => {
+    setLastVerse(
+      bibleCountInfo.filter((el) => el.book === book).filter((el) => el.chapter === chapter)[0]
+        .lastVerse || 0
+    )
+  }, [book, chapter])
 
   useEffect(() => {
     if (commentaryData.length > 0) {

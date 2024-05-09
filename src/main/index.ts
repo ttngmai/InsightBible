@@ -1,10 +1,13 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { TFindAllBibleByBookAndChapter, TFindAllCommentaryByBookAndChapter } from '@shared/types'
 import { findAllBibleByBookAndChapter } from '@/repository/BibleRepository'
 import { findAllCommentaryByBookAndChapter } from './repository/CommentaryRepository'
+import Store from 'electron-store'
+import { fileURLToPath } from 'url'
+
+const store = new Store()
 
 function createWindow(): void {
   // Create the browser window.
@@ -15,8 +18,8 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: true,
+      preload: fileURLToPath(new URL('../preload/index.mjs', import.meta.url)),
+      sandbox: false,
       contextIsolation: true
     }
   })
@@ -35,7 +38,7 @@ function createWindow(): void {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(fileURLToPath(new URL('../renderer/index.html', import.meta.url)))
   }
 }
 
@@ -53,6 +56,12 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  ipcMain.on('electron-store-get', async (event, val) => {
+    event.returnValue = store.get(val)
+  })
+  ipcMain.on('electron-store-set', async (event, key, val) => {
+    store.set(key, val)
+  })
   ipcMain.handle(
     'findAllBibleByBookAndChapter',
     (_, ...args: Parameters<TFindAllBibleByBookAndChapter>) => findAllBibleByBookAndChapter(...args)

@@ -1,16 +1,16 @@
 import tw, { css, TwStyle } from 'twin.macro'
 import Button from './Button'
 import { IconArrowLeft, IconArrowRight, IconBible, IconSettings } from '@tabler/icons-react'
-import { bookInfo } from '@shared/constants'
+import { bibleCountInfo, bookInfo } from '@shared/constants'
 import ModalPortal from '@renderer/utils/ModalPortal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BibleSearchModal from '../bible/BibleSearchModal'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { bookAtom, chapterAtom, selectedItemAtom, verseAtom } from '@renderer/store'
+import { useAtomValue } from 'jotai'
+import { readWriteBookAtom, readWriteChapterAtom, readWriteVerseAtom } from '@renderer/store'
 import SettingsModal from '../SettingsModal'
+import useSearchBible from '@renderer/hooks/useSearchBible'
 
 type NavigationBarProps = {
-  lastChapter: number
   sx?: TwStyle
 }
 
@@ -21,16 +21,27 @@ const dividerStyles = css`
   }
 `
 
-function NavigationBar({ lastChapter, sx }: NavigationBarProps): JSX.Element {
-  const book = useAtomValue(bookAtom)
-  const chapter = useAtomValue(chapterAtom)
-  const verse = useAtomValue(verseAtom)
-  const setSelectedItem = useSetAtom(selectedItemAtom)
+function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
+  const book = useAtomValue(readWriteBookAtom)
+  const chapter = useAtomValue(readWriteChapterAtom)
+  const verse = useAtomValue(readWriteVerseAtom)
 
+  const [lastChapter, setLastChapter] = useState<number>(0)
   const [openBibleSearchModal, setOpenBibleSearchModal] = useState<boolean>(false)
   const [openSettingsModal, setOpenSettingsModal] = useState<boolean>(false)
 
   const bookName = bookInfo.find((el) => el.id === book)?.name
+
+  const searchBible = useSearchBible()
+
+  useEffect(() => {
+    setLastChapter(
+      bibleCountInfo
+        .filter((el) => el.book === book)
+        .map((el) => el.chapter)
+        .sort((a, b) => b - a)[0] || 0
+    )
+  }, [book, chapter])
 
   return (
     <div
@@ -46,7 +57,7 @@ function NavigationBar({ lastChapter, sx }: NavigationBarProps): JSX.Element {
         <div className="flex items-center w-180pxr select-none">
           <Button
             type="button"
-            onClick={() => setSelectedItem({ book, chapter: chapter - 1, verse: 1 })}
+            onClick={() => searchBible(book, chapter - 1, 1)}
             size="icon"
             disabled={chapter <= 1}
           >
@@ -59,7 +70,7 @@ function NavigationBar({ lastChapter, sx }: NavigationBarProps): JSX.Element {
           </div>
           <Button
             type="button"
-            onClick={() => setSelectedItem({ book, chapter: chapter + 1, verse: 1 })}
+            onClick={() => searchBible(book, chapter + 1, 1)}
             size="icon"
             disabled={chapter === lastChapter}
           >
@@ -92,7 +103,7 @@ function NavigationBar({ lastChapter, sx }: NavigationBarProps): JSX.Element {
             chapter={chapter}
             verse={verse}
             onSelect={({ book, chapter, verse }) => {
-              setSelectedItem({ book, chapter, verse })
+              searchBible(book, chapter, verse)
               setOpenBibleSearchModal(false)
             }}
             onClose={() => setOpenBibleSearchModal(false)}

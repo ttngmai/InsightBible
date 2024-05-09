@@ -6,6 +6,9 @@ export default defineConfig({
   main: {
     build: {
       rollupOptions: {
+        output: {
+          format: 'es'
+        },
         external: ['better-sqlite3']
       }
     },
@@ -18,6 +21,13 @@ export default defineConfig({
     }
   },
   preload: {
+    build: {
+      rollupOptions: {
+        output: {
+          format: 'es'
+        }
+      }
+    },
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {

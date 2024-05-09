@@ -1,11 +1,11 @@
 import { useAtom } from 'jotai'
 import Modal from './common/Modal'
 import {
-  bibleBackgroundColorAtom,
-  bibleTextColorAtom,
-  commentaryBackgroundColorAtom,
-  commentaryTextColorAtom,
-  fontSizeAtom
+  readWriteBibleBackgroundColorAtom,
+  readWriteBibleTextColorAtom,
+  readWriteCommentaryBackgroundColorAtom,
+  readWriteCommentaryTextColor,
+  readWriteFontSizeAtom
 } from '@renderer/store'
 import { IconPaint, IconPalette, IconTextSize } from '@tabler/icons-react'
 import Select from './common/Select'
@@ -32,13 +32,13 @@ const optionItemBoxStyle = css`
 `
 
 function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
-  const [fontSize, setFontSize] = useAtom(fontSizeAtom)
-  const [bibleBackgroundColor, setBibleBackgroundColor] = useAtom(bibleBackgroundColorAtom)
-  const [bibleTextColor, setBibleTextColor] = useAtom(bibleTextColorAtom)
+  const [fontSize, setFontSize] = useAtom(readWriteFontSizeAtom)
+  const [bibleBackgroundColor, setBibleBackgroundColor] = useAtom(readWriteBibleBackgroundColorAtom)
+  const [bibleTextColor, setBibleTextColor] = useAtom(readWriteBibleTextColorAtom)
   const [commentaryBackgroundColor, setCommentaryBackgroundColor] = useAtom(
-    commentaryBackgroundColorAtom
+    readWriteCommentaryBackgroundColorAtom
   )
-  const [commentaryTextColor, setCommentaryTextColor] = useAtom(commentaryTextColorAtom)
+  const [commentaryTextColor, setCommentaryTextColor] = useAtom(readWriteCommentaryTextColor)
 
   const [openBibleBackgroundColorPickerModal, setOpenBibleBackgroundColorPickerModal] =
     useState<boolean>(false)
