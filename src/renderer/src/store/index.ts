@@ -3,7 +3,7 @@ import { atom } from 'jotai'
 
 const bookAtom = atom<number>(Number(window.electron.store.get('book')) || 1)
 const chapterAtom = atom<number>(Number(window.electron.store.get('chapter')) || 1)
-const verseAtom = atom<number>(window.electron.store.get('verse') || 1)
+const verseAtom = atom<number>(Number(window.electron.store.get('verse')) || 1)
 const bibleDataAtom = atom<TBible[]>([])
 const commentaryDataAtom = atom<TCommentary[]>([])
 
