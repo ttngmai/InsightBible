@@ -7,6 +7,7 @@ import {
   readWriteFontSizeAtom,
   readWriteVerseAtom
 } from '@renderer/store'
+import isLight from '@renderer/utils/contrastColor'
 import { bibleCountInfo } from '@shared/constants'
 import { useAtomValue } from 'jotai'
 import { forwardRef, useEffect, useRef, useState } from 'react'
@@ -20,13 +21,14 @@ type CommentaryTextProps = {
   verse: number
   btext: string
   textColor: string
+  isLight: boolean
 }
 
 const CommentaryText = forwardRef<HTMLDivElement, CommentaryTextProps>(
-  ({ verse, btext, textColor }, ref) => {
+  ({ verse, btext, textColor, isLight }, ref) => {
     return (
       <div ref={ref} data-verse={verse} css={[tw`flex mb-[1rem]`, verse === 1 && tw`pt-16pxr`]}>
-        <p className="mr-4pxr text-brand-blue-500">{verse}</p>
+        <p css={[tw`mr-[0.5em]`, isLight ? tw`text-brand-blue-500` : tw`text-white`]}>{verse}</p>
         <p dangerouslySetInnerHTML={{ __html: btext }} style={{ color: textColor }} />
       </div>
     )
@@ -61,6 +63,7 @@ function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
             verse={i}
             btext="없음"
             textColor={commentaryTextColor}
+            isLight={isLight(commentaryBackgroundColor)}
           />
         )
       }
@@ -72,6 +75,7 @@ function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
           verse={verse}
           btext={btext}
           textColor={commentaryTextColor}
+          isLight={isLight(commentaryBackgroundColor)}
         />
       )
 
@@ -86,6 +90,7 @@ function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
           verse={i}
           btext="없음"
           textColor={commentaryTextColor}
+          isLight={isLight(commentaryBackgroundColor)}
         />
       )
     }

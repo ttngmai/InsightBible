@@ -7,6 +7,7 @@ import {
   readWriteFontSizeAtom,
   readWriteVerseAtom
 } from '@renderer/store'
+import isLight from '@renderer/utils/contrastColor'
 import { bibleCountInfo } from '@shared/constants'
 import { useAtom, useAtomValue } from 'jotai'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
@@ -20,16 +21,19 @@ type BibleTextProps = {
   verse: number
   btext: string
   textColor: string
+  isLight: boolean
 }
 
-const BibleText = forwardRef<HTMLDivElement, BibleTextProps>(({ verse, btext, textColor }, ref) => {
-  return (
-    <div ref={ref} data-verse={verse} css={[tw`flex mb-[0.25rem]`, verse === 1 && tw`pt-16pxr`]}>
-      <p className="mr-4pxr text-brand-blue-500">{verse}</p>
-      <p style={{ color: textColor }}>{btext}</p>
-    </div>
-  )
-})
+const BibleText = forwardRef<HTMLDivElement, BibleTextProps>(
+  ({ verse, btext, textColor, isLight }, ref) => {
+    return (
+      <div ref={ref} data-verse={verse} css={[tw`flex mb-[0.25rem]`, verse === 1 && tw`pt-16pxr`]}>
+        <p css={[tw`mr-[0.5em]`, isLight ? tw`text-brand-blue-500` : tw`text-white`]}>{verse}</p>
+        <p style={{ color: textColor }}>{btext}</p>
+      </div>
+    )
+  }
+)
 BibleText.displayName = 'BibleText'
 
 function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
@@ -61,6 +65,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
             verse={i}
             btext="없음"
             textColor={bibleTextColor}
+            isLight={isLight(bibleBackgroundColor)}
           />
         )
       }
@@ -72,6 +77,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
           verse={verse}
           btext={btext}
           textColor={bibleTextColor}
+          isLight={isLight(bibleBackgroundColor)}
         />
       )
 
@@ -86,6 +92,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
           verse={i}
           btext="없음"
           textColor={bibleTextColor}
+          isLight={isLight(bibleBackgroundColor)}
         />
       )
     }
