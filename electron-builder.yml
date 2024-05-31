@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: my-bible
+productName: insight-bible
 directories:
   buildResources: build
 extraResources:
@@ -17,7 +17,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: my-bible
+  executableName: insight-bible
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
