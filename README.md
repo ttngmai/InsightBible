@@ -1,4 +1,4 @@
-# my-bible
+# insight-bible
 
 An Electron application with React and TypeScript
 
