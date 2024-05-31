@@ -1,13 +1,10 @@
-import { TFindAllBibleByBookAndChapter } from '@shared/types'
+import { TFindBible } from '@shared/types'
 import { getBibleDB } from './getDB'
 import { TBible } from '@shared/models'
 
-export const findAllBibleByBookAndChapter: TFindAllBibleByBookAndChapter = async (
-  book,
-  chapter
-) => {
+export const findBible: TFindBible = async (name, book, chapter) => {
   try {
-    const db = getBibleDB('개역개정')
+    const db = getBibleDB(name)
 
     const query = `SELECT * FROM Bible WHERE book = ${book} AND chapter = ${chapter}`
     const readQuery = db.prepare(query)
@@ -15,7 +12,6 @@ export const findAllBibleByBookAndChapter: TFindAllBibleByBookAndChapter = async
 
     return Promise.resolve(rowList)
   } catch (err) {
-    console.error(err)
-    throw err
+    return Promise.resolve([])
   }
 }

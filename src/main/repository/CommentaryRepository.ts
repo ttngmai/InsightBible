@@ -1,13 +1,10 @@
-import { TFindAllCommentaryByBookAndChapter } from '@shared/types'
+import { TFindCommentary } from '@shared/types'
 import { getCommentaryDB } from './getDB'
 import { TCommentary } from '@shared/models'
 
-export const findAllCommentaryByBookAndChapter: TFindAllCommentaryByBookAndChapter = async (
-  book,
-  chapter
-) => {
+export const findCommentary: TFindCommentary = async (name, book, chapter) => {
   try {
-    const db = getCommentaryDB('매튜헨리')
+    const db = getCommentaryDB(name)
 
     const query = `SELECT * FROM Bible WHERE book = ${book} AND chapter = ${chapter}`
     const readQuery = db.prepare(query)
@@ -15,7 +12,6 @@ export const findAllCommentaryByBookAndChapter: TFindAllCommentaryByBookAndChapt
 
     return Promise.resolve(rowList)
   } catch (err) {
-    console.error(err)
-    throw err
+    return Promise.resolve([])
   }
 }

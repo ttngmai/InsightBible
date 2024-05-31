@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { TFindAllBibleByBookAndChapter, TFindAllCommentaryByBookAndChapter } from '@shared/types'
+import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types'
 
 if (!process.contextIsolated) {
   throw new Error('contextIsolation must be enabled in the BrowserWindow')
@@ -11,6 +11,7 @@ if (!process.contextIsolated) {
  */
 try {
   contextBridge.exposeInMainWorld('electron', {
+    locale: navigator.language,
     store: {
       get(key) {
         return ipcRenderer.sendSync('electron-store-get', key)
@@ -21,11 +22,11 @@ try {
     }
   })
   contextBridge.exposeInMainWorld('context', {
-    locale: navigator.language,
-    findAllBibleByBookAndChapter: (...args: Parameters<TFindAllBibleByBookAndChapter>) =>
-      ipcRenderer.invoke('findAllBibleByBookAndChapter', ...args),
-    findAllCommentaryByBookAndChapter: (...args: Parameters<TFindAllCommentaryByBookAndChapter>) =>
-      ipcRenderer.invoke('findAllCommentaryByBookAndChapter', ...args)
+    findBible: (...args: Parameters<TFindBible>) => ipcRenderer.invoke('findBible', ...args),
+    findBibleSoundTimeStamp: (...args: Parameters<TFindBibleSoundTimeStamp>) =>
+      ipcRenderer.invoke('findBibleSoundTimeStamp', ...args),
+    findCommentary: (...args: Parameters<TFindCommentary>) =>
+      ipcRenderer.invoke('findCommentary', ...args)
   })
 } catch (error) {
   console.error(error)

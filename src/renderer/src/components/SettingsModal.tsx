@@ -8,14 +8,13 @@ import {
   readWriteFontSizeAtom
 } from '@renderer/store'
 import { IconPaint, IconPalette, IconTextSize } from '@tabler/icons-react'
-import Select from './common/Select'
-import SelectItem from './common/SelectItem'
 import * as Tabs from '@radix-ui/react-tabs'
 import { useState } from 'react'
 import Button from './common/Button'
 import ColorPickerModal from './ColorPickerModal'
 import ModalPortal from '@renderer/utils/ModalPortal'
 import tw, { css } from 'twin.macro'
+import SelectBox from './common/SelectBox'
 
 type SettingsModalProps = {
   onClose: () => void
@@ -25,7 +24,7 @@ const tabsTriggerStyle = css`
   ${tw`flex-1 flex items-center justify-center h-32pxr p-4pxr leading-none select-none data-[state=active]:text-brand-blue-500 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current`}
 `
 const tabsContentStyle = css`
-  ${tw`flex flex-col gap-16pxr`}
+  ${tw`flex flex-col justify-center items-center gap-16pxr`}
 `
 const optionItemBoxStyle = css`
   ${tw`flex items-center select-none`}
@@ -70,18 +69,15 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                   <div css={[optionItemBoxStyle]}>
                     <IconTextSize size={18} className="mr-8pxr" />
                     <span className="mr-8pxr">글자 크기</span>
-                    <Select
-                      defaultValue={fontSize}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        setFontSize(Number(e.target.value))
-                      }
-                    >
-                      {Array.from({ length: 60 }, (_, idx) => idx + 1).map((el) => (
-                        <SelectItem key={el} value={el}>
-                          {`${el} px`}
-                        </SelectItem>
-                      ))}
-                    </Select>
+                    <SelectBox
+                      defaultValue={String(fontSize)}
+                      itemList={Array.from({ length: 45 }, (_, idx) => idx + 16).map((el) => ({
+                        key: String(el),
+                        value: String(el),
+                        text: `${el} px`
+                      }))}
+                      setValue={(value) => setFontSize(Number(value))}
+                    />
                   </div>
                 </Tabs.Content>
                 <Tabs.Content value="성경" css={[tabsContentStyle]}>
@@ -91,9 +87,12 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                     <Button
                       type="button"
                       onClick={() => setOpenBibleBackgroundColorPickerModal(true)}
-                      sx={tw`w-60pxr`}
+                      sx={tw`w-26pxr h-26pxr p-2pxr bg-black rounded-full`}
                     >
-                      선택
+                      <div
+                        className="w-full h-full rounded-full"
+                        style={{ backgroundColor: bibleBackgroundColor }}
+                      />
                     </Button>
                   </div>
                   <div css={[optionItemBoxStyle]}>
@@ -102,9 +101,12 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                     <Button
                       type="button"
                       onClick={() => setOpenBibleTextColorPickerModal(true)}
-                      sx={tw`w-60pxr`}
+                      sx={tw`w-26pxr h-26pxr p-2pxr bg-black rounded-full`}
                     >
-                      선택
+                      <div
+                        className="w-full h-full rounded-full"
+                        style={{ backgroundColor: bibleTextColor }}
+                      />
                     </Button>
                   </div>
                 </Tabs.Content>
@@ -115,9 +117,12 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                     <Button
                       type="button"
                       onClick={() => setOpenCommentaryBackgroundColorPickerModal(true)}
-                      sx={tw`w-60pxr`}
+                      sx={tw`w-26pxr h-26pxr p-2pxr bg-black rounded-full`}
                     >
-                      선택
+                      <div
+                        className="w-full h-full rounded-full"
+                        style={{ backgroundColor: commentaryBackgroundColor }}
+                      />
                     </Button>
                   </div>
                   <div css={[optionItemBoxStyle]}>
@@ -126,9 +131,12 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                     <Button
                       type="button"
                       onClick={() => setOpenCommentaryTextColorPickerModal(true)}
-                      sx={tw`w-60pxr`}
+                      sx={tw`w-26pxr h-26pxr p-2pxr bg-black rounded-full`}
                     >
-                      선택
+                      <div
+                        className="w-full h-full rounded-full"
+                        style={{ backgroundColor: commentaryTextColor }}
+                      />
                     </Button>
                   </div>
                 </Tabs.Content>

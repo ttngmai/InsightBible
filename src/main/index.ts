@@ -1,18 +1,20 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { TFindAllBibleByBookAndChapter, TFindAllCommentaryByBookAndChapter } from '@shared/types'
-import { findAllBibleByBookAndChapter } from '@/repository/BibleRepository'
-import { findAllCommentaryByBookAndChapter } from './repository/CommentaryRepository'
+import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types'
+import { findBible } from '@/repository/BibleRepository'
+import { findCommentary } from './repository/CommentaryRepository'
 import Store from 'electron-store'
 import { fileURLToPath } from 'url'
+import { findBibleSoundTimeStamp } from './repository/BibleSoundTimeStampRepository'
 
 const store = new Store()
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1200,
+    minWidth: 1200,
     height: 670,
     show: false,
     autoHideMenuBar: true,
@@ -59,17 +61,15 @@ app.whenReady().then(() => {
   ipcMain.on('electron-store-get', async (event, val) => {
     event.returnValue = store.get(val)
   })
-  ipcMain.on('electron-store-set', async (event, key, val) => {
+  ipcMain.on('electron-store-set', async (_, key, val) => {
     store.set(key, val)
   })
-  ipcMain.handle(
-    'findAllBibleByBookAndChapter',
-    (_, ...args: Parameters<TFindAllBibleByBookAndChapter>) => findAllBibleByBookAndChapter(...args)
+  ipcMain.handle('findBible', (_, ...args: Parameters<TFindBible>) => findBible(...args))
+  ipcMain.handle('findBibleSoundTimeStamp', (_, ...args: Parameters<TFindBibleSoundTimeStamp>) =>
+    findBibleSoundTimeStamp(...args)
   )
-  ipcMain.handle(
-    'findAllCommentaryByBookAndChapter',
-    (_, ...args: Parameters<TFindAllCommentaryByBookAndChapter>) =>
-      findAllCommentaryByBookAndChapter(...args)
+  ipcMain.handle('findCommentary', (_, ...args: Parameters<TFindCommentary>) =>
+    findCommentary(...args)
   )
 
   createWindow()

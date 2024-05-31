@@ -1,7 +1,15 @@
-import { TBible, TCommentary } from './models'
+import { TBible, TBibleSoundTimeStamp, TCommentary } from './models'
 
-export type TFindAllBibleByBookAndChapter = (book: number, chapter: number) => Promise<TBible[]>
-export type TFindAllCommentaryByBookAndChapter = (
+export type TFindBible = (name: string, book: number, chapter: number) => Promise<TBible[]>
+
+export type TFindBibleSoundTimeStamp = (
+  name: string,
+  book: number,
+  chapter: number
+) => Promise<TBibleSoundTimeStamp[]>
+
+export type TFindCommentary = (
+  name: string,
   book: number,
   chapter: number
 ) => Promise<TCommentary[]>

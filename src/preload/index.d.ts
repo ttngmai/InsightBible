@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TFindAllBibleByBookAndChapter, TFindAllCommentaryByBookAndChapter } from '@shared/types'
+import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types'
 
 declare global {
   interface Window {
     electron: {
+      locale: string
       store: {
         get: (key: string) => any
         set: (key: string, value: any) => void
       }
     }
     context: {
-      locale: string
-      findAllBibleByBookAndChapter: TFindAllBibleByBookAndChapter
-      findAllCommentaryByBookAndChapter: TFindAllCommentaryByBookAndChapter
+      findBible: TFindBible
+      findBibleSoundTimeStamp: TFindBibleSoundTimeStamp
+      findCommentary: TFindCommentary
     }
   }
 }

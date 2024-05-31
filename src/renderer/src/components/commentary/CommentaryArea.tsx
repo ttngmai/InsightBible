@@ -1,6 +1,4 @@
 import {
-  readWriteBookAtom,
-  readWriteChapterAtom,
   readWriteCommentaryBackgroundColorAtom,
   readWriteCommentaryDataAtom,
   readWriteCommentaryTextColor,
@@ -8,9 +6,9 @@ import {
   readWriteVerseAtom
 } from '@renderer/store'
 import isLight from '@renderer/utils/contrastColor'
-import { bibleCountInfo } from '@shared/constants'
 import { useAtomValue } from 'jotai'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef } from 'react'
+import { ImperativePanelHandle, Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import tw, { TwStyle } from 'twin.macro'
 
 type CommentaryAreaProps = {
@@ -38,36 +36,19 @@ CommentaryText.displayName = 'CommentaryText'
 
 function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
   const verseRefs = useRef<null[] | HTMLDivElement[]>([]) // 각 주석 HTML 요소의 참조 리스트
+  const leftPaddingRef = useRef<ImperativePanelHandle>(null) // 왼쪽 패딩 영역 참조
+  const rightPaddingRef = useRef<ImperativePanelHandle>(null) // 오른쪽 패딩 영역 참조
 
   const currentBibleVerse = useAtomValue(readWriteVerseAtom)
   const fontSize = useAtomValue(readWriteFontSizeAtom)
   const commentaryBackgroundColor = useAtomValue(readWriteCommentaryBackgroundColorAtom)
   const commentaryTextColor = useAtomValue(readWriteCommentaryTextColor)
-  const book = useAtomValue(readWriteBookAtom)
-  const chapter = useAtomValue(readWriteChapterAtom)
   const commentaryData = useAtomValue(readWriteCommentaryDataAtom)
-
-  const [lastVerse, setLastVerse] = useState<number>(0)
 
   // 각 주석 렌더링
   const renderVerseList = (): JSX.Element[] => {
     const result: JSX.Element[] = []
-    let verseCursor = 1
-
     commentaryData.forEach(({ verse, btext }) => {
-      for (let i = verseCursor; i < verse; i++) {
-        result.push(
-          <CommentaryText
-            key={`empty-${i}`}
-            ref={(el) => (verseRefs.current[i] = el)}
-            verse={i}
-            btext="없음"
-            textColor={commentaryTextColor}
-            isLight={isLight(commentaryBackgroundColor)}
-          />
-        )
-      }
-
       result.push(
         <CommentaryText
           key={verse}
@@ -78,32 +59,21 @@ function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
           isLight={isLight(commentaryBackgroundColor)}
         />
       )
-
-      verseCursor = verse + 1
     })
-
-    for (let i = verseCursor; i <= lastVerse; i++) {
-      result.push(
-        <CommentaryText
-          key={`empty-${i}`}
-          ref={(el) => (verseRefs.current[i] = el)}
-          verse={i}
-          btext="없음"
-          textColor={commentaryTextColor}
-          isLight={isLight(commentaryBackgroundColor)}
-        />
-      )
-    }
 
     return result
   }
 
-  useEffect(() => {
-    setLastVerse(
-      bibleCountInfo.filter((el) => el.book === book).filter((el) => el.chapter === chapter)[0]
-        .lastVerse || 0
-    )
-  }, [book, chapter])
+  // 양쪽 패딩 영역의 너비를 동일하게 조정
+  const handleSidePaddingSync = (referenceSide: 'left' | 'right'): void => {
+    if (leftPaddingRef.current === null || rightPaddingRef.current === null) return
+
+    if (referenceSide === 'left') {
+      rightPaddingRef.current.resize(leftPaddingRef.current.getSize())
+    } else {
+      leftPaddingRef.current.resize(rightPaddingRef.current.getSize())
+    }
+  }
 
   useEffect(() => {
     if (commentaryData.length > 0) {
@@ -121,8 +91,24 @@ function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
 
   return (
     <div css={[sx]} style={{ backgroundColor: commentaryBackgroundColor }}>
-      <div className={`px-16pxr text-[${fontSize}px]`}>{renderVerseList()}</div>
-      <div className="h-screen" />
+      <PanelGroup direction="horizontal" style={{ height: 'auto' }}>
+        <Panel ref={leftPaddingRef} defaultSize={1} maxSize={25} className="bg-gray-100" />
+        <PanelResizeHandle
+          className="w-2pxr px-4pxr hover:bg-gray-300 cursor-col-resize"
+          onDoubleClick={() => handleSidePaddingSync('left')}
+        />
+
+        <Panel>
+          <div className={`px-16pxr text-[${fontSize}px]`}>{renderVerseList()}</div>
+        </Panel>
+
+        <PanelResizeHandle
+          className="w-2pxr px-4pxr hover:bg-gray-300 cursor-col-resize"
+          onDoubleClick={() => handleSidePaddingSync('right')}
+        />
+        <Panel ref={rightPaddingRef} defaultSize={1} maxSize={25} className="bg-gray-200" />
+      </PanelGroup>
+      <div className="w-full h-screen bg-gray-200" />
     </div>
   )
 }

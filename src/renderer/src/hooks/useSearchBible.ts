@@ -1,23 +1,28 @@
 import {
   readWriteBibleDataAtom,
+  readWriteBibleName,
   readWriteBookAtom,
   readWriteChapterAtom,
   readWriteCommentaryDataAtom,
+  readWriteCommentaryName,
   readWriteVerseAtom
 } from '@renderer/store'
-import { useSetAtom } from 'jotai'
-import { useCallback } from 'react'
+import { useAtomValue, useSetAtom } from 'jotai'
 
 function useSearchBible(): (book: number, chapter: number, verse: number) => void {
+  const bibleName = useAtomValue(readWriteBibleName)
+  const commentaryName = useAtomValue(readWriteCommentaryName)
+
   const setBibleData = useSetAtom(readWriteBibleDataAtom)
   const setCommentaryData = useSetAtom(readWriteCommentaryDataAtom)
+
   const setBook = useSetAtom(readWriteBookAtom)
   const setChapter = useSetAtom(readWriteChapterAtom)
   const setVerse = useSetAtom(readWriteVerseAtom)
 
-  const searchBible = useCallback(async (book: number, chapter: number, verse: number) => {
-    const bible = await window.context.findAllBibleByBookAndChapter(book, chapter)
-    const commentary = await window.context.findAllCommentaryByBookAndChapter(book, chapter)
+  const searchBible = async (book: number, chapter: number, verse: number): Promise<void> => {
+    const bible = await window.context.findBible(bibleName, book, chapter)
+    const commentary = await window.context.findCommentary(commentaryName, book, chapter)
 
     setBibleData(bible)
     setCommentaryData(commentary)
@@ -25,7 +30,7 @@ function useSearchBible(): (book: number, chapter: number, verse: number) => voi
     setBook(book)
     setChapter(chapter)
     setVerse(verse)
-  }, [])
+  }
 
   return searchBible
 }
