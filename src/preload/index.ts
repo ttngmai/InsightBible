@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types'
+import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types.js'
 
 if (!process.contextIsolated) {
   throw new Error('contextIsolation must be enabled in the BrowserWindow')

@@ -112,13 +112,13 @@ function BibleSearchModal({
   useEffect(() => {
     const currentBookRef = bookRefs.current
       .filter((el) => el instanceof HTMLElement)
-      .find((el) => Number(el.dataset.book) === book)
+      .find((el) => Number(el?.dataset?.book) === book)
     const currentChapterRef = chapterRefs.current
       .filter((el) => el instanceof HTMLElement)
-      .find((el) => Number(el.dataset.chapter) === chapter)
+      .find((el) => Number(el?.dataset?.chapter) === chapter)
     const currentVerseRef = verseRefs.current
       .filter((el) => el instanceof HTMLElement)
-      .find((el) => Number(el.dataset.verse) === verse)
+      .find((el) => Number(el?.dataset?.verse) === verse)
 
     if (currentBookRef) currentBookRef.scrollIntoView(true)
     if (currentChapterRef) currentChapterRef.scrollIntoView(true)

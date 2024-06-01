@@ -1,6 +1,6 @@
-import { TFindCommentary } from '@shared/types'
-import { getCommentaryDB } from './getDB'
-import { TCommentary } from '@shared/models'
+import { TFindCommentary } from '@shared/types.js'
+import { getCommentaryDB } from './getDB.js'
+import { TCommentary } from '@shared/models.js'
 
 export const findCommentary: TFindCommentary = async (name, book, chapter) => {
   try {

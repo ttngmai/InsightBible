@@ -79,7 +79,7 @@ function CommentaryArea({ sx }: CommentaryAreaProps): JSX.Element | null {
     if (commentaryData.length > 0) {
       const currentVerseRef = verseRefs.current
         .filter((el) => el instanceof HTMLElement)
-        .find((el) => Number(el.dataset.verse) === currentBibleVerse)
+        .find((el) => Number(el?.dataset?.verse) === currentBibleVerse)
 
       if (currentVerseRef) {
         currentVerseRef.scrollIntoView(true)

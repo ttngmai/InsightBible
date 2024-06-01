@@ -158,7 +158,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
     if (bibleData.length > 0) {
       const currentVerseRef = verseRefs.current
         .filter((el) => el instanceof HTMLElement)
-        .find((el) => Number(el.dataset.verse) === verse)
+        .find((el) => Number(el?.dataset?.verse) === verse)
 
       if (currentVerseRef) {
         currentVerseRef.scrollIntoView(true)
@@ -174,7 +174,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
     if (currentReadingPosition !== null && bibleData.length > 0) {
       const currentVerseRef = verseRefs.current
         .filter((el) => el instanceof HTMLElement)
-        .find((el) => Number(el.dataset.verse) === currentReadingPosition)
+        .find((el) => Number(el?.dataset?.verse) === currentReadingPosition)
 
       if (currentVerseRef) {
         currentVerseRef.scrollIntoView({ block: 'center' })

@@ -1,4 +1,4 @@
-import { TBible, TBibleSoundTimeStamp, TCommentary } from './models'
+import { TBible, TBibleSoundTimeStamp, TCommentary } from './models.js'
 
 export type TFindBible = (name: string, book: number, chapter: number) => Promise<TBible[]>
 

@@ -1,12 +1,12 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types'
-import { findBible } from '@/repository/BibleRepository'
-import { findCommentary } from './repository/CommentaryRepository'
+import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types.js'
+import { findBible } from '@/repository/BibleRepository.js'
+import { findCommentary } from './repository/CommentaryRepository.js'
 import Store from 'electron-store'
 import { fileURLToPath } from 'url'
-import { findBibleSoundTimeStamp } from './repository/BibleSoundTimeStampRepository'
+import { findBibleSoundTimeStamp } from './repository/BibleSoundTimeStampRepository.js'
 
 const store = new Store()
 

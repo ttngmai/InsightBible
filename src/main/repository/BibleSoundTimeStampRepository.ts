@@ -1,6 +1,6 @@
-import { TFindBibleSoundTimeStamp } from '@shared/types'
-import { getBibleSoundTimeStampDB } from './getDB'
-import { TBibleSoundTimeStamp } from '@shared/models'
+import { TFindBibleSoundTimeStamp } from '@shared/types.js'
+import { getBibleSoundTimeStampDB } from './getDB.js'
+import { TBibleSoundTimeStamp } from '@shared/models.js'
 
 export const findBibleSoundTimeStamp: TFindBibleSoundTimeStamp = async (name, book, chapter) => {
   try {

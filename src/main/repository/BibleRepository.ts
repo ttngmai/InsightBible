@@ -1,6 +1,6 @@
-import { TFindBible } from '@shared/types'
-import { getBibleDB } from './getDB'
-import { TBible } from '@shared/models'
+import { TFindBible } from '@shared/types.js'
+import { getBibleDB } from './getDB.js'
+import { TBible } from '@shared/models.js'
 
 export const findBible: TFindBible = async (name, book, chapter) => {
   try {
