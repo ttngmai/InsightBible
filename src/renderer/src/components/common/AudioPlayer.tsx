@@ -148,7 +148,7 @@ function AudioPlayer({ url, onProgress }: AudioPlayerProps): JSX.Element {
                 </button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
-                <DropdownMenu.Content className="w-100pxr rounded border bg-white" align="end">
+                <DropdownMenu.Content className="w-120pxr rounded border bg-white" align="end">
                   <DropdownMenu.Sub>
                     <DropdownMenu.SubTrigger className="flex items-center px-8pxr py-2pxr cursor-pointer select-none outline-none">
                       재생 속도
@@ -159,7 +159,7 @@ function AudioPlayer({ url, onProgress }: AudioPlayerProps): JSX.Element {
                     <DropdownMenu.Portal>
                       <DropdownMenu.SubContent
                         sideOffset={2}
-                        className="w-100pxr rounded border bg-white overflow-hidden"
+                        className="w-120pxr rounded border bg-white overflow-hidden"
                       >
                         {[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0].map((rate) => (
                           <DropdownMenu.Item
@@ -186,7 +186,7 @@ function AudioPlayer({ url, onProgress }: AudioPlayerProps): JSX.Element {
                     <DropdownMenu.Portal>
                       <DropdownMenu.SubContent
                         sideOffset={2}
-                        className="w-100pxr rounded border bg-white overflow-hidden"
+                        className="w-120pxr rounded border bg-white overflow-hidden"
                       >
                         {['남성', '여성'].map((voice) => (
                           <DropdownMenu.Item

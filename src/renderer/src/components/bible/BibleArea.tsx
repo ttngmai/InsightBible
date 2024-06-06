@@ -5,11 +5,12 @@ import {
   readWriteBookAtom,
   readWriteChapterAtom,
   readWriteCurrentReadingPositionAtom,
+  readWriteCurrentReadingTextColorAtom,
   readWriteFontSizeAtom,
   readWriteVerseAtom
 } from '@renderer/store'
 import isLight from '@renderer/utils/contrastColor'
-import { bibleCountInfo } from '@shared/constants'
+import { bibleCountInfo, bookInfo } from '@shared/constants'
 import { useAtom, useAtomValue } from 'jotai'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { ImperativePanelHandle, Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
@@ -23,17 +24,25 @@ type BibleTextProps = {
   verse: number
   btext: string
   textColor: string
+  currentReadingTextColor: string | null
   isLight: boolean
   isReading: boolean
 }
 
 const BibleText = forwardRef<HTMLDivElement, BibleTextProps>(
-  ({ verse, btext, textColor, isLight, isReading }, ref) => {
+  ({ verse, btext, textColor, currentReadingTextColor, isLight, isReading }, ref) => {
     return (
-      <div ref={ref} data-verse={verse} css={[tw`mb-[0.25rem]`, verse === 1 && tw`pt-16pxr`]}>
+      <div ref={ref} data-verse={verse} className="mb-[0.25rem]">
         <div className="flex">
           <p css={[tw`mr-[0.5em]`, isLight ? tw`text-brand-blue-500` : tw`text-white`]}>{verse}</p>
-          <p style={{ color: textColor }} css={[isReading && tw`font-bold`]}>
+          <p
+            style={
+              isReading && currentReadingTextColor
+                ? { color: currentReadingTextColor }
+                : { color: textColor }
+            }
+            css={[isReading && tw`font-bold`]}
+          >
             {btext}
           </p>
         </div>
@@ -45,6 +54,7 @@ BibleText.displayName = 'BibleText'
 
 function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   const wrapperRef = useRef<HTMLDivElement>(null) // 최상단 Div 요소의 참조 리스트
+  const titleRef = useRef<HTMLHeadingElement>(null) // h1 요소의 참조
   const verseRefs = useRef<null[] | HTMLElement[]>([]) // 각 절 HTML 요소의 참조 리스트
   const leftPaddingRef = useRef<ImperativePanelHandle>(null) // 왼쪽 패딩 영역 참조
   const rightPaddingRef = useRef<ImperativePanelHandle>(null) // 오른쪽 패딩 영역 참조
@@ -52,6 +62,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   const fontSize = useAtomValue(readWriteFontSizeAtom)
   const bibleBackgroundColor = useAtomValue(readWriteBibleBackgroundColorAtom)
   const bibleTextColor = useAtomValue(readWriteBibleTextColorAtom)
+  const currentReadingTextColor = useAtomValue(readWriteCurrentReadingTextColorAtom)
   const book = useAtomValue(readWriteBookAtom)
   const chapter = useAtomValue(readWriteChapterAtom)
   const [verse, setVerse] = useAtom(readWriteVerseAtom)
@@ -60,6 +71,8 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
 
   const [lastVerse, setLastVerse] = useState<number>(0)
   const [visibleVerseList, setVisibleVerseList] = useState<number[]>([]) // 화면에 보이는 절 숫자 리스트
+
+  const bookName = bookInfo.find((el) => el.id === book)?.name
 
   // 각 절 렌더링
   const renderVerseList = (): JSX.Element[] => {
@@ -75,6 +88,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
             verse={i}
             btext="없음"
             textColor={bibleTextColor}
+            currentReadingTextColor={currentReadingTextColor}
             isLight={isLight(bibleBackgroundColor)}
             isReading={i === currentReadingPosition}
           />
@@ -88,6 +102,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
           verse={verse}
           btext={btext}
           textColor={bibleTextColor}
+          currentReadingTextColor={currentReadingTextColor}
           isLight={isLight(bibleBackgroundColor)}
           isReading={verse === currentReadingPosition}
         />
@@ -104,6 +119,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
           verse={i}
           btext="없음"
           textColor={bibleTextColor}
+          currentReadingTextColor={currentReadingTextColor}
           isLight={isLight(bibleBackgroundColor)}
           isReading={i === currentReadingPosition}
         />
@@ -156,6 +172,11 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
     })
 
     if (bibleData.length > 0) {
+      if (verse === 1 && titleRef.current) {
+        titleRef.current.scrollIntoView(true)
+        return
+      }
+
       const currentVerseRef = verseRefs.current
         .filter((el) => el instanceof HTMLElement)
         .find((el) => Number(el?.dataset?.verse) === verse)
@@ -202,14 +223,20 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
         />
 
         <Panel>
-          <div className={`px-16pxr text-[${fontSize}px]`}>{renderVerseList()}</div>
+          <div className={`px-16pxr text-[${fontSize}px]`}>
+            <h1
+              ref={titleRef}
+              className="py-24pxr text-[1.25em] text-center"
+            >{`${bookName} ${chapter}장`}</h1>
+            {renderVerseList()}
+          </div>
         </Panel>
 
         <PanelResizeHandle
           className="w-2pxr px-4pxr hover:bg-gray-300 cursor-col-resize"
           onDoubleClick={() => handleSidePaddingSync('right')}
         />
-        <Panel ref={rightPaddingRef} defaultSize={1} maxSize={25} className="bg-gray-200" />
+        <Panel ref={rightPaddingRef} defaultSize={1} maxSize={25} className="bg-gray-100" />
       </PanelGroup>
       <div className="w-full h-screen bg-gray-200" />
     </div>

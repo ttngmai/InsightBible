@@ -4,7 +4,7 @@ import { ComponentProps, forwardRef, ReactNode } from 'react'
 
 type TItem = { key: string; value: string; text: string }
 
-type SelectBoxProps = ComponentProps<'select'> & {
+type CustomSelectProps = ComponentProps<'select'> & {
   placeholder?: string
   itemList: TItem[]
   defaultValue?: string
@@ -17,7 +17,12 @@ type SelectItemProps = {
   children?: ReactNode
 }
 
-function SelectBox({ placeholder, itemList, defaultValue, setValue }: SelectBoxProps): JSX.Element {
+function CustomSelect({
+  placeholder,
+  itemList,
+  defaultValue,
+  setValue
+}: CustomSelectProps): JSX.Element {
   return (
     <Select.Root defaultValue={defaultValue} onValueChange={setValue}>
       <Select.Trigger className="inline-flex items-center justify-center gap-4pxr h-32pxr px-8pxr py-4pxr border border-[#E4E4E7] text-[14px] rounded-md shadow-sm hover:bg-[#F8FAFC]">
@@ -62,4 +67,4 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
 )
 SelectItem.displayName = 'SelectItem'
 
-export default SelectBox
+export default CustomSelect

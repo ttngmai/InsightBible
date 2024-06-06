@@ -5,16 +5,17 @@ import {
   readWriteBibleTextColorAtom,
   readWriteCommentaryBackgroundColorAtom,
   readWriteCommentaryTextColor,
+  readWriteCurrentReadingTextColorAtom,
   readWriteFontSizeAtom
 } from '@renderer/store'
-import { IconPaint, IconPalette, IconTextSize } from '@tabler/icons-react'
+import { IconHighlight, IconPaint, IconPalette, IconTextSize } from '@tabler/icons-react'
 import * as Tabs from '@radix-ui/react-tabs'
 import { useState } from 'react'
 import Button from './common/Button'
 import ColorPickerModal from './ColorPickerModal'
 import ModalPortal from '@renderer/utils/ModalPortal'
 import tw, { css } from 'twin.macro'
-import SelectBox from './common/SelectBox'
+import CustomSelect from './common/CustomSelect'
 
 type SettingsModalProps = {
   onClose: () => void
@@ -34,6 +35,9 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [fontSize, setFontSize] = useAtom(readWriteFontSizeAtom)
   const [bibleBackgroundColor, setBibleBackgroundColor] = useAtom(readWriteBibleBackgroundColorAtom)
   const [bibleTextColor, setBibleTextColor] = useAtom(readWriteBibleTextColorAtom)
+  const [currentReadingTextColor, setCurrentReadingTextColor] = useAtom(
+    readWriteCurrentReadingTextColorAtom
+  )
   const [commentaryBackgroundColor, setCommentaryBackgroundColor] = useAtom(
     readWriteCommentaryBackgroundColorAtom
   )
@@ -42,6 +46,8 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [openBibleBackgroundColorPickerModal, setOpenBibleBackgroundColorPickerModal] =
     useState<boolean>(false)
   const [openBibleTextColorPickerModal, setOpenBibleTextColorPickerModal] = useState<boolean>(false)
+  const [openCurrentReadingTextColorPickerModal, setOpenCurrentReadingTextColorPickerModal] =
+    useState<boolean>(false)
   const [openCommentaryBackgroundColorPickerModal, setOpenCommentaryBackgroundColorPickerModal] =
     useState<boolean>(false)
   const [openCommentaryTextColorPickerModal, setOpenCommentaryTextColorPickerModal] =
@@ -69,7 +75,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                   <div css={[optionItemBoxStyle]}>
                     <IconTextSize size={18} className="mr-8pxr" />
                     <span className="mr-8pxr">글자 크기</span>
-                    <SelectBox
+                    <CustomSelect
                       defaultValue={String(fontSize)}
                       itemList={Array.from({ length: 45 }, (_, idx) => idx + 16).map((el) => ({
                         key: String(el),
@@ -106,6 +112,20 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                       <div
                         className="w-full h-full rounded-full"
                         style={{ backgroundColor: bibleTextColor }}
+                      />
+                    </Button>
+                  </div>
+                  <div css={[optionItemBoxStyle]}>
+                    <IconHighlight size={18} className="mr-8pxr" />
+                    <span className="mr-8pxr">강조색</span>
+                    <Button
+                      type="button"
+                      onClick={() => setOpenCurrentReadingTextColorPickerModal(true)}
+                      sx={tw`w-26pxr h-26pxr p-2pxr bg-black rounded-full`}
+                    >
+                      <div
+                        className="w-full h-full rounded-full"
+                        style={{ backgroundColor: currentReadingTextColor || bibleTextColor }}
                       />
                     </Button>
                   </div>
@@ -172,6 +192,21 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                 setOpenBibleTextColorPickerModal(false)
               }}
               onClose={() => setOpenBibleTextColorPickerModal(false)}
+            />
+          </div>
+        </ModalPortal>
+      )}
+      {openCurrentReadingTextColorPickerModal && (
+        <ModalPortal>
+          <div>
+            <ColorPickerModal
+              title="강조색 선택"
+              defaultColor={currentReadingTextColor || bibleTextColor}
+              onColorSelect={(color: string) => {
+                setCurrentReadingTextColor(color)
+                setOpenCurrentReadingTextColorPickerModal(false)
+              }}
+              onClose={() => setOpenCurrentReadingTextColorPickerModal(false)}
             />
           </div>
         </ModalPortal>

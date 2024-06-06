@@ -18,7 +18,7 @@ import {
 } from '@renderer/store'
 import SettingsModal from '../SettingsModal'
 import useSearchBible from '@renderer/hooks/useSearchBible'
-import SelectBox from './SelectBox'
+import CustomSelect from './CustomSelect'
 import useChangeBible from '@renderer/hooks/useChangeBible'
 import useChangeCommentary from '@renderer/hooks/useChangeCommentary'
 import AudioPlayer from './AudioPlayer'
@@ -150,7 +150,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
           </div>
           <div className="flex items-center select-none">
             <div className="flex gap-[0.5rem]">
-              <SelectBox
+              <CustomSelect
                 placeholder="성경 선택"
                 itemList={[
                   { key: '개역개정', value: '개역개정', text: '개역개정' },
@@ -159,7 +159,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                 defaultValue={bibleName}
                 setValue={(value) => changeBible(value)}
               />
-              <SelectBox
+              <CustomSelect
                 placeholder="주석 선택"
                 itemList={[
                   { key: '사용 안 함', value: '사용 안 함', text: '사용 안 함' },

@@ -21,6 +21,9 @@ const bibleBackgroundColorAtom = atom<string>(
 const bibleTextColorAtom = atom<string>(
   String(window.electron.store.get('bibleTextColor') || '#000')
 )
+const currentReadingTextColorAtom = atom<string | null>(
+  String(window.electron.store.get('currentReadingTextColor') || null)
+)
 const commentaryBackgroundColorAtom = atom<string>(
   String(window.electron.store.get('commentaryBackgroundColor') || '#fff')
 )
@@ -118,6 +121,13 @@ export const readWriteBibleTextColorAtom = atom<string, [string], void>(
   (_, set, newValue) => {
     set(bibleTextColorAtom, newValue)
     window.electron.store.set('bibleTextColor', newValue)
+  }
+)
+export const readWriteCurrentReadingTextColorAtom = atom<string | null, [string | null], void>(
+  (get) => get(currentReadingTextColorAtom),
+  (_, set, newValue) => {
+    set(currentReadingTextColorAtom, newValue)
+    window.electron.store.set('currentReadingTextColor', newValue)
   }
 )
 export const readWriteCommentaryBackgroundColorAtom = atom<string, [string], void>(
