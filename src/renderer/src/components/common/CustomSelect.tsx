@@ -7,7 +7,8 @@ type TItem = { key: string; value: string; text: string }
 type CustomSelectProps = ComponentProps<'select'> & {
   placeholder?: string
   itemList: TItem[]
-  defaultValue?: string
+  value: string
+  disabled?: boolean
   setValue: (value: string) => void
 }
 
@@ -20,11 +21,12 @@ type SelectItemProps = {
 function CustomSelect({
   placeholder,
   itemList,
-  defaultValue,
+  value,
+  disabled,
   setValue
 }: CustomSelectProps): JSX.Element {
   return (
-    <Select.Root defaultValue={defaultValue} onValueChange={setValue}>
+    <Select.Root value={value} onValueChange={setValue} disabled={disabled}>
       <Select.Trigger className="inline-flex items-center justify-center gap-4pxr h-32pxr px-8pxr py-4pxr border border-[#E4E4E7] text-[14px] rounded-md shadow-sm hover:bg-[#F8FAFC]">
         <Select.Value placeholder={placeholder} />
         <Select.Icon>

@@ -6,14 +6,13 @@ import {
   readWriteChapterAtom,
   readWriteCurrentReadingPositionAtom,
   readWriteCurrentReadingTextColorAtom,
-  readWriteFontSizeAtom,
+  readWriteBibleTextSizeAtom,
   readWriteVerseAtom
 } from '@renderer/store'
 import isLight from '@renderer/utils/contrastColor'
 import { bibleCountInfo, bookInfo } from '@shared/constants'
 import { useAtom, useAtomValue } from 'jotai'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
-import { ImperativePanelHandle, Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import tw, { TwStyle } from 'twin.macro'
 
 type BibleAreaProps = {
@@ -56,10 +55,8 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   const wrapperRef = useRef<HTMLDivElement>(null) // 최상단 Div 요소의 참조 리스트
   const titleRef = useRef<HTMLHeadingElement>(null) // h1 요소의 참조
   const verseRefs = useRef<null[] | HTMLElement[]>([]) // 각 절 HTML 요소의 참조 리스트
-  const leftPaddingRef = useRef<ImperativePanelHandle>(null) // 왼쪽 패딩 영역 참조
-  const rightPaddingRef = useRef<ImperativePanelHandle>(null) // 오른쪽 패딩 영역 참조
 
-  const fontSize = useAtomValue(readWriteFontSizeAtom)
+  const fontSize = useAtomValue(readWriteBibleTextSizeAtom)
   const bibleBackgroundColor = useAtomValue(readWriteBibleBackgroundColorAtom)
   const bibleTextColor = useAtomValue(readWriteBibleTextColorAtom)
   const currentReadingTextColor = useAtomValue(readWriteCurrentReadingTextColorAtom)
@@ -146,17 +143,6 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   // 옵저버
   const observer = new IntersectionObserver(handleObserver, { threshold: 0.5 })
 
-  // 양쪽 패딩 영역의 너비를 동일하게 조정
-  const handleSidePaddingSync = (referenceSide: 'left' | 'right'): void => {
-    if (leftPaddingRef.current === null || rightPaddingRef.current === null) return
-
-    if (referenceSide === 'left') {
-      rightPaddingRef.current.resize(leftPaddingRef.current.getSize())
-    } else {
-      leftPaddingRef.current.resize(rightPaddingRef.current.getSize())
-    }
-  }
-
   useEffect(() => {
     setLastVerse(
       bibleCountInfo.filter((el) => el.book === book).filter((el) => el.chapter === chapter)[0]
@@ -215,30 +201,17 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
 
   return (
     <div ref={wrapperRef} css={[sx]} style={{ backgroundColor: bibleBackgroundColor }}>
-      <PanelGroup direction="horizontal" style={{ height: 'auto' }}>
-        <Panel ref={leftPaddingRef} defaultSize={1} maxSize={25} className="bg-gray-100" />
-        <PanelResizeHandle
-          className="w-2pxr px-4pxr hover:bg-gray-300 cursor-col-resize"
-          onDoubleClick={() => handleSidePaddingSync('left')}
-        />
-
-        <Panel>
-          <div className={`px-16pxr text-[${fontSize}px]`}>
-            <h1
-              ref={titleRef}
-              className="py-24pxr text-[1.25em] text-center"
-            >{`${bookName} ${chapter}장`}</h1>
-            {renderVerseList()}
-          </div>
-        </Panel>
-
-        <PanelResizeHandle
-          className="w-2pxr px-4pxr hover:bg-gray-300 cursor-col-resize"
-          onDoubleClick={() => handleSidePaddingSync('right')}
-        />
-        <Panel ref={rightPaddingRef} defaultSize={1} maxSize={25} className="bg-gray-100" />
-      </PanelGroup>
-      <div className="w-full h-screen bg-gray-200" />
+      <div className={`px-16pxr text-[${fontSize}px]`}>
+        <h1
+          ref={titleRef}
+          css={[
+            tw`py-24pxr text-[1.25em] text-center`,
+            !isLight(bibleBackgroundColor) && tw`text-white`
+          ]}
+        >{`${bookName} ${chapter}장`}</h1>
+        {renderVerseList()}
+      </div>
+      <div className="h-screen" />
     </div>
   )
 }

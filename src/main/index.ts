@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, clipboard } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types.js'
@@ -14,7 +14,6 @@ function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
-    minWidth: 1200,
     height: 670,
     show: false,
     autoHideMenuBar: true,
@@ -63,6 +62,9 @@ app.whenReady().then(() => {
   })
   ipcMain.on('electron-store-set', async (_, key, val) => {
     store.set(key, val)
+  })
+  ipcMain.on('copy-text', (_, selectedText) => {
+    clipboard.writeText(selectedText)
   })
   ipcMain.handle('findBible', (_, ...args: Parameters<TFindBible>) => findBible(...args))
   ipcMain.handle('findBibleSoundTimeStamp', (_, ...args: Parameters<TFindBibleSoundTimeStamp>) =>

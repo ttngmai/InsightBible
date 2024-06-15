@@ -9,6 +9,7 @@ declare global {
         get: (key: string) => any
         set: (key: string, value: any) => void
       }
+      copyText: (selectedText: string) => void
     }
     context: {
       findBible: TFindBible

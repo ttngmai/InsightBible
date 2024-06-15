@@ -19,7 +19,8 @@ try {
       set(property, val) {
         ipcRenderer.send('electron-store-set', property, val)
       }
-    }
+    },
+    copyText: (selectedText: string) => ipcRenderer.send('copy-text', selectedText)
   })
   contextBridge.exposeInMainWorld('context', {
     findBible: (...args: Parameters<TFindBible>) => ipcRenderer.invoke('findBible', ...args),

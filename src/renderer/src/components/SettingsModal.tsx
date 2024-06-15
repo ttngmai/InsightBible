@@ -6,7 +6,8 @@ import {
   readWriteCommentaryBackgroundColorAtom,
   readWriteCommentaryTextColor,
   readWriteCurrentReadingTextColorAtom,
-  readWriteFontSizeAtom
+  readWriteBibleTextSizeAtom,
+  readWriteCommentaryTextSizeAtom
 } from '@renderer/store'
 import { IconHighlight, IconPaint, IconPalette, IconTextSize } from '@tabler/icons-react'
 import * as Tabs from '@radix-ui/react-tabs'
@@ -25,15 +26,21 @@ const tabsTriggerStyle = css`
   ${tw`flex-1 flex items-center justify-center h-32pxr p-4pxr leading-none select-none data-[state=active]:text-brand-blue-500 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-current`}
 `
 const tabsContentStyle = css`
-  ${tw`flex flex-col justify-center items-center gap-16pxr`}
+  ${tw`flex flex-col grow justify-center items-center`}
 `
-const optionItemBoxStyle = css`
-  ${tw`flex items-center select-none`}
+const contentTableStyle = css`
+  th,
+  td {
+    ${tw`py-4pxr`}
+  }
+  td {
+    ${tw`text-center`}
+  }
 `
 
 function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
-  const [fontSize, setFontSize] = useAtom(readWriteFontSizeAtom)
   const [bibleBackgroundColor, setBibleBackgroundColor] = useAtom(readWriteBibleBackgroundColorAtom)
+  const [bibleTextSize, setBibleTextSize] = useAtom(readWriteBibleTextSizeAtom)
   const [bibleTextColor, setBibleTextColor] = useAtom(readWriteBibleTextColorAtom)
   const [currentReadingTextColor, setCurrentReadingTextColor] = useAtom(
     readWriteCurrentReadingTextColorAtom
@@ -41,6 +48,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [commentaryBackgroundColor, setCommentaryBackgroundColor] = useAtom(
     readWriteCommentaryBackgroundColorAtom
   )
+  const [commentaryTextSize, setCommentaryTextSize] = useAtom(readWriteCommentaryTextSizeAtom)
   const [commentaryTextColor, setCommentaryTextColor] = useAtom(readWriteCommentaryTextColor)
 
   const [openBibleBackgroundColorPickerModal, setOpenBibleBackgroundColorPickerModal] =
@@ -56,40 +64,26 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   return (
     <>
       <Modal title="설정" onClose={onClose}>
-        <div className="h-480pxr bg-white">
-          <div className="flex w-600pxr h-full">
-            <div className="w-full p-16pxr">
-              <Tabs.Root defaultValue="공통">
-                <Tabs.List className="flex shrink-0 mb-30pxr border-b">
-                  <Tabs.Trigger value="공통" css={[tabsTriggerStyle]}>
-                    공통
-                  </Tabs.Trigger>
-                  <Tabs.Trigger value="성경" css={[tabsTriggerStyle]}>
-                    성경
-                  </Tabs.Trigger>
-                  <Tabs.Trigger value="주석" css={[tabsTriggerStyle]}>
-                    주석
-                  </Tabs.Trigger>
-                </Tabs.List>
-                <Tabs.Content value="공통" css={[tabsContentStyle]}>
-                  <div css={[optionItemBoxStyle]}>
-                    <IconTextSize size={18} className="mr-8pxr" />
-                    <span className="mr-8pxr">글자 크기</span>
-                    <CustomSelect
-                      defaultValue={String(fontSize)}
-                      itemList={Array.from({ length: 45 }, (_, idx) => idx + 16).map((el) => ({
-                        key: String(el),
-                        value: String(el),
-                        text: `${el} px`
-                      }))}
-                      setValue={(value) => setFontSize(Number(value))}
-                    />
-                  </div>
-                </Tabs.Content>
-                <Tabs.Content value="성경" css={[tabsContentStyle]}>
-                  <div css={[optionItemBoxStyle]}>
-                    <IconPaint size={18} className="mr-8pxr" />
-                    <span className="mr-8pxr">배경색</span>
+        <div className="flex w-600pxr h-360pxr p-16pxr bg-white">
+          <Tabs.Root defaultValue="성경" className="flex flex-col w-full">
+            <Tabs.List className="flex shrink-0 border-b">
+              <Tabs.Trigger value="성경" css={[tabsTriggerStyle]}>
+                성경
+              </Tabs.Trigger>
+              <Tabs.Trigger value="주석" css={[tabsTriggerStyle]}>
+                주석
+              </Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content value="성경" css={[tabsContentStyle]}>
+              <table css={[contentTableStyle, tw`w-200pxr`]}>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconPaint size={18} />
+                      <span>배경색</span>
+                    </div>
+                  </th>
+                  <td>
                     <Button
                       type="button"
                       onClick={() => setOpenBibleBackgroundColorPickerModal(true)}
@@ -100,10 +94,35 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                         style={{ backgroundColor: bibleBackgroundColor }}
                       />
                     </Button>
-                  </div>
-                  <div css={[optionItemBoxStyle]}>
-                    <IconPalette size={18} className="mr-8pxr" />
-                    <span className="mr-8pxr">글자색</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconTextSize size={18} />
+                      <span>글자 크기</span>
+                    </div>
+                  </th>
+                  <td>
+                    <CustomSelect
+                      value={String(bibleTextSize)}
+                      itemList={Array.from({ length: 45 }, (_, idx) => idx + 16).map((el) => ({
+                        key: String(el),
+                        value: String(el),
+                        text: `${el} px`
+                      }))}
+                      setValue={(value) => setBibleTextSize(Number(value))}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconPalette size={18} />
+                      <span>글자색</span>
+                    </div>
+                  </th>
+                  <td>
                     <Button
                       type="button"
                       onClick={() => setOpenBibleTextColorPickerModal(true)}
@@ -114,10 +133,16 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                         style={{ backgroundColor: bibleTextColor }}
                       />
                     </Button>
-                  </div>
-                  <div css={[optionItemBoxStyle]}>
-                    <IconHighlight size={18} className="mr-8pxr" />
-                    <span className="mr-8pxr">강조색</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconHighlight size={18} />
+                      <span>강조색</span>
+                    </div>
+                  </th>
+                  <td>
                     <Button
                       type="button"
                       onClick={() => setOpenCurrentReadingTextColorPickerModal(true)}
@@ -128,12 +153,20 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                         style={{ backgroundColor: currentReadingTextColor || bibleTextColor }}
                       />
                     </Button>
-                  </div>
-                </Tabs.Content>
-                <Tabs.Content value="주석" css={[tabsContentStyle]}>
-                  <div css={[optionItemBoxStyle]}>
-                    <IconPaint size={18} className="mr-8pxr" />
-                    <span className="mr-8pxr">배경색</span>
+                  </td>
+                </tr>
+              </table>
+            </Tabs.Content>
+            <Tabs.Content value="주석" css={[tabsContentStyle]}>
+              <table css={[contentTableStyle, tw`w-200pxr`]}>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconPaint size={18} />
+                      <span>배경색</span>
+                    </div>
+                  </th>
+                  <td>
                     <Button
                       type="button"
                       onClick={() => setOpenCommentaryBackgroundColorPickerModal(true)}
@@ -144,10 +177,35 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                         style={{ backgroundColor: commentaryBackgroundColor }}
                       />
                     </Button>
-                  </div>
-                  <div css={[optionItemBoxStyle]}>
-                    <IconPalette size={18} className="mr-8pxr" />
-                    <span className="mr-8pxr">글자색</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconTextSize size={18} />
+                      <span>글자 크기</span>
+                    </div>
+                  </th>
+                  <td>
+                    <CustomSelect
+                      value={String(commentaryTextSize)}
+                      itemList={Array.from({ length: 45 }, (_, idx) => idx + 16).map((el) => ({
+                        key: String(el),
+                        value: String(el),
+                        text: `${el} px`
+                      }))}
+                      setValue={(value) => setCommentaryTextSize(Number(value))}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconPalette size={18} />
+                      <span>글자색</span>
+                    </div>
+                  </th>
+                  <td>
                     <Button
                       type="button"
                       onClick={() => setOpenCommentaryTextColorPickerModal(true)}
@@ -158,11 +216,11 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                         style={{ backgroundColor: commentaryTextColor }}
                       />
                     </Button>
-                  </div>
-                </Tabs.Content>
-              </Tabs.Root>
-            </div>
-          </div>
+                  </td>
+                </tr>
+              </table>
+            </Tabs.Content>
+          </Tabs.Root>
         </div>
       </Modal>
 
