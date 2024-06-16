@@ -1,3 +1,4 @@
+import 'pretendard/dist/web/variable/pretendardvariable.css'
 import './assets/index.css'
 
 import React from 'react'
