@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types'
+import { TFindBible, TFindBibleSoundTimeStamp } from '@shared/types'
 
 declare global {
   interface Window {
@@ -14,7 +14,6 @@ declare global {
     context: {
       findBible: TFindBible
       findBibleSoundTimeStamp: TFindBibleSoundTimeStamp
-      findCommentary: TFindCommentary
     }
   }
 }

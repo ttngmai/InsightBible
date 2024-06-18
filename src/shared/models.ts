@@ -14,11 +14,3 @@ export type TBibleSoundTimeStamp = {
   start_time: number
   end_time: number
 }
-
-export type TCommentary = {
-  id: number
-  book: number
-  chapter: number
-  verse: number
-  btext: string
-}

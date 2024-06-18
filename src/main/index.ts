@@ -1,9 +1,8 @@
 import { app, shell, BrowserWindow, ipcMain, clipboard } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types.js'
+import { TFindBible, TFindBibleSoundTimeStamp } from '@shared/types.js'
 import { findBible } from '@/repository/BibleRepository.js'
-import { findCommentary } from './repository/CommentaryRepository.js'
 import Store from 'electron-store'
 import { fileURLToPath } from 'url'
 import { findBibleSoundTimeStamp } from './repository/BibleSoundTimeStampRepository.js'
@@ -70,9 +69,6 @@ app.whenReady().then(() => {
   ipcMain.handle('findBible', (_, ...args: Parameters<TFindBible>) => findBible(...args))
   ipcMain.handle('findBibleSoundTimeStamp', (_, ...args: Parameters<TFindBibleSoundTimeStamp>) =>
     findBibleSoundTimeStamp(...args)
-  )
-  ipcMain.handle('findCommentary', (_, ...args: Parameters<TFindCommentary>) =>
-    findCommentary(...args)
   )
 
   createWindow()

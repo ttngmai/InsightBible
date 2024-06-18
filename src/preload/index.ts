@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { TFindBible, TFindBibleSoundTimeStamp, TFindCommentary } from '@shared/types.js'
+import { TFindBible, TFindBibleSoundTimeStamp } from '@shared/types.js'
 
 if (!process.contextIsolated) {
   throw new Error('contextIsolation must be enabled in the BrowserWindow')
@@ -25,9 +25,7 @@ try {
   contextBridge.exposeInMainWorld('context', {
     findBible: (...args: Parameters<TFindBible>) => ipcRenderer.invoke('findBible', ...args),
     findBibleSoundTimeStamp: (...args: Parameters<TFindBibleSoundTimeStamp>) =>
-      ipcRenderer.invoke('findBibleSoundTimeStamp', ...args),
-    findCommentary: (...args: Parameters<TFindCommentary>) =>
-      ipcRenderer.invoke('findCommentary', ...args)
+      ipcRenderer.invoke('findBibleSoundTimeStamp', ...args)
   })
 } catch (error) {
   console.error(error)

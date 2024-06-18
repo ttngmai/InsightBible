@@ -18,7 +18,6 @@ import {
   readWriteBibleSoundTimeStampAtom,
   readWriteBookAtom,
   readWriteChapterAtom,
-  readWriteCommentaryName,
   readWriteCurrentReadingPositionAtom,
   readWriteVerseAtom,
   readWriteVoiceTypeAtom
@@ -27,7 +26,6 @@ import SettingsModal from '../SettingsModal'
 import useSearchBible from '@renderer/hooks/useSearchBible'
 import CustomSelect from './CustomSelect'
 import useChangeBible from '@renderer/hooks/useChangeBible'
-import useChangeCommentary from '@renderer/hooks/useChangeCommentary'
 import BibleAudioPlayer from './BibleAudioPlayer'
 import { OnProgressProps } from 'react-player/base'
 import * as Select from '@radix-ui/react-select'
@@ -41,7 +39,6 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const bibleName = useAtomValue(readWriteBibleName)
-  const commentaryName = useAtomValue(readWriteCommentaryName)
   const book = useAtomValue(readWriteBookAtom)
   const chapter = useAtomValue(readWriteChapterAtom)
   const verse = useAtomValue(readWriteVerseAtom)
@@ -61,7 +58,6 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
   const bookName = bookInfo.find((el) => el.id === book)?.name
 
   const changeBible = useChangeBible()
-  const changeCommentary = useChangeCommentary()
   const searchBible = useSearchBible()
 
   const handleProgress = (state: OnProgressProps): void => {
@@ -123,7 +119,15 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
       setCurrentReadingPosition(null)
       setBibleSoundFileLocation(
         new URL(
-          `/src/assets/sounds/bible/${bibleName}/${voiceType}/${book}_${chapter}.mp3`,
+          '/src/assets/sounds/bible/' +
+            bibleName +
+            '/' +
+            voiceType +
+            '/' +
+            book +
+            '_' +
+            chapter +
+            '.mp3',
           import.meta.url
         ).toString()
       )
@@ -161,7 +165,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
           ]}
         >
           <div className="flex items-center w-full h-full px-16pxr py-8pxr">
-            <div className="flex items-center shrink-0">
+            <div className="flex justify-center items-center shrink-0 w-100pxr">
               <CustomSelect
                 placeholder="성경 선택"
                 itemList={[
@@ -171,14 +175,18 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                 ]}
                 value={bibleName}
                 setValue={(value) => changeBible(value)}
-              />
+              >
+                <div className="flex justify-center items-center mx-16pxr text-[18px] font-bold">
+                  <span>{bibleName}</span>
+                </div>
+              </CustomSelect>
             </div>
             <Separator.Root
               className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-8pxr bg-gray-300"
               decorative
               orientation="vertical"
             />
-            <div className="flex items-center shrink-0 w-360pxr">
+            <div className="flex items-center shrink-0 w-300pxr">
               <div className="flex items-center gap-16pxr mx-auto">
                 <Select.Root
                   value={String(book)}
@@ -219,42 +227,23 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                   >
                     <IconArrowLeft size={18} />
                   </Button>
-                  <Select.Root
+                  <CustomSelect
+                    itemList={bibleCountInfo
+                      .filter((el) => el.book === book)
+                      .map((el) => ({
+                        key: String(el.chapter),
+                        value: String(el.chapter),
+                        text: `${el.chapter}장`
+                      }))}
                     value={String(chapter)}
-                    onValueChange={(value) => searchBible(book, Number(value), 1)}
+                    setValue={(value) => searchBible(book, Number(value), 1)}
                   >
-                    <Select.Trigger>
-                      <Select.Value asChild>
-                        <div className="flex justify-center items-center mx-16pxr text-[18px] font-bold">
-                          <span>{chapter}장</span>
-                          <span className="mx-8pxr">/</span>
-                          <span>{lastChapter}장</span>
-                        </div>
-                      </Select.Value>
-                    </Select.Trigger>
-                    <Select.Portal>
-                      <Select.Content className="overflow-hidden bg-white rounded-md shadow-sm">
-                        <Select.Viewport className="p-4pxr">
-                          <Select.Group>
-                            {bibleCountInfo
-                              .filter((el) => el.book === book)
-                              .map((el) => (
-                                <Select.Item
-                                  key={el.chapter}
-                                  value={String(el.chapter)}
-                                  className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] rounded-md select-none cursor-pointer hover:bg-[#F8FAFC]"
-                                >
-                                  <Select.ItemText>{el.chapter}장</Select.ItemText>
-                                  <Select.ItemIndicator className="inline-flex items-center justify-center">
-                                    <IconCheck size={14} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
-                              ))}
-                          </Select.Group>
-                        </Select.Viewport>
-                      </Select.Content>
-                    </Select.Portal>
-                  </Select.Root>
+                    <div className="flex justify-center items-center mx-16pxr text-[18px] font-bold">
+                      <span>{chapter}장</span>
+                      <span className="mx-8pxr">/</span>
+                      <span>{lastChapter}장</span>
+                    </div>
+                  </CustomSelect>
                   <Button
                     type="button"
                     onClick={() => searchBible(book, chapter + 1, 1)}
@@ -271,7 +260,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
               decorative
               orientation="vertical"
             />
-            <div className="flex items-center shrink-0 w-400pxr h-40pxr">
+            <div className="flex items-center shrink-0 w-360pxr h-40pxr">
               <BibleAudioPlayer url={bibleSoundFileLocation} onProgress={handleProgress} />
             </div>
             <Separator.Root
@@ -279,27 +268,10 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
               decorative
               orientation="vertical"
             />
-            <div className="flex justify-end grow items-center">
+            <div className="flex grow items-center">
               <Button type="button" onClick={() => setOpenSettingsModal(true)} size="icon">
                 <IconSettings size={18} />
               </Button>
-            </div>
-            <Separator.Root
-              className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-8pxr bg-gray-300"
-              decorative
-              orientation="vertical"
-            />
-            <div className="flex items-center shrink-0">
-              <CustomSelect
-                placeholder="주석 선택"
-                itemList={[
-                  { key: '사용 안 함', value: '사용 안 함', text: '사용 안 함' },
-                  { key: '매튜헨리', value: '매튜헨리', text: '매튜헨리' },
-                  { key: '성경관주', value: '성경관주', text: '성경관주' }
-                ]}
-                value={commentaryName}
-                setValue={(value) => changeCommentary(value)}
-              />
             </div>
           </div>
         </div>

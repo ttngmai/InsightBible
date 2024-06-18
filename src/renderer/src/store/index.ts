@@ -1,16 +1,12 @@
-import { TBible, TBibleSoundTimeStamp, TCommentary } from '@shared/models'
+import { TBible, TBibleSoundTimeStamp } from '@shared/models'
 import { TReadingRange } from '@shared/types'
 import { atom } from 'jotai'
 
 const bibleNameAtom = atom<string>(String(window.electron.store.get('bibleName') || '개역개정'))
-const commentaryNameAtom = atom<string>(
-  String(window.electron.store.get('commentaryName') || '사용 안 함')
-)
 const bookAtom = atom<number>(Number(window.electron.store.get('book') || 1))
 const chapterAtom = atom<number>(Number(window.electron.store.get('chapter') || 1))
 const verseAtom = atom<number>(Number(window.electron.store.get('verse') || 1))
 const bibleDataAtom = atom<TBible[]>([])
-const commentaryDataAtom = atom<TCommentary[]>([])
 const voiceTypeAtom = atom<string>(String(window.electron.store.get('voiceType') || '남성'))
 const bibleSoundTimeStampAtom = atom<TBibleSoundTimeStamp[]>([])
 const readingRangeAtom = atom<TReadingRange | null>(null)
@@ -26,28 +22,12 @@ const bibleTextColorAtom = atom<string>(
 const currentReadingTextColorAtom = atom<string | null>(
   String(window.electron.store.get('currentReadingTextColor') || null)
 )
-const commentaryTextSizeAtom = atom<number>(
-  Number(window.electron.store.get('commentaryTextSize') || 16)
-)
-const commentaryBackgroundColorAtom = atom<string>(
-  String(window.electron.store.get('commentaryBackgroundColor') || '#fff')
-)
-const commentaryTextColorAtom = atom<string>(
-  String(window.electron.store.get('commentaryTextColor') || '#000')
-)
 
 export const readWriteBibleName = atom<string, [string], void>(
   (get) => get(bibleNameAtom),
   (_, set, newValue) => {
     set(bibleNameAtom, newValue)
     window.electron.store.set('bibleName', newValue)
-  }
-)
-export const readWriteCommentaryName = atom<string, [string], void>(
-  (get) => get(commentaryNameAtom),
-  (_, set, newValue) => {
-    set(commentaryNameAtom, newValue)
-    window.electron.store.set('commentaryName', newValue)
   }
 )
 export const readWriteBookAtom = atom<number, [number], void>(
@@ -75,12 +55,6 @@ export const readWriteBibleDataAtom = atom<TBible[], [TBible[]], void>(
   (get) => get(bibleDataAtom),
   (_, set, newValue) => {
     set(bibleDataAtom, newValue)
-  }
-)
-export const readWriteCommentaryDataAtom = atom<TCommentary[], [TCommentary[]], void>(
-  (get) => get(commentaryDataAtom),
-  (_, set, newValue) => {
-    set(commentaryDataAtom, newValue)
   }
 )
 export const readWriteVoiceTypeAtom = atom<string, string[], void>(
@@ -139,26 +113,5 @@ export const readWriteCurrentReadingTextColorAtom = atom<string | null, [string 
   (_, set, newValue) => {
     set(currentReadingTextColorAtom, newValue)
     window.electron.store.set('currentReadingTextColor', newValue)
-  }
-)
-export const readWriteCommentaryBackgroundColorAtom = atom<string, [string], void>(
-  (get) => get(commentaryBackgroundColorAtom),
-  (_, set, newValue) => {
-    set(commentaryBackgroundColorAtom, newValue)
-    window.electron.store.set('commentaryBackgroundColor', newValue)
-  }
-)
-export const readWriteCommentaryTextSizeAtom = atom<number, [number], void>(
-  (get) => get(commentaryTextSizeAtom),
-  (_, set, newValue) => {
-    set(commentaryTextSizeAtom, newValue)
-    window.electron.store.set('commentaryTextSize', newValue)
-  }
-)
-export const readWriteCommentaryTextColor = atom<string, [string], void>(
-  (get) => get(commentaryTextColorAtom),
-  (_, set, newValue) => {
-    set(commentaryTextColorAtom, newValue)
-    window.electron.store.set('commentaryTextColor', newValue)
   }
 )

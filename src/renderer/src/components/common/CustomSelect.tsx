@@ -23,16 +23,23 @@ function CustomSelect({
   itemList,
   value,
   disabled,
+  children,
   setValue
 }: CustomSelectProps): JSX.Element {
   return (
     <Select.Root value={value} onValueChange={setValue} disabled={disabled}>
-      <Select.Trigger className="inline-flex items-center justify-center gap-4pxr h-32pxr px-8pxr py-4pxr border border-[#E4E4E7] text-[14px] rounded-md shadow-sm hover:bg-[#F8FAFC]">
-        <Select.Value placeholder={placeholder} />
-        <Select.Icon>
-          <IconChevronDown size={14} />
-        </Select.Icon>
-      </Select.Trigger>
+      {children ? (
+        <Select.Trigger>
+          <Select.Value asChild>{children}</Select.Value>
+        </Select.Trigger>
+      ) : (
+        <Select.Trigger className="inline-flex items-center justify-center gap-4pxr h-32pxr px-8pxr py-4pxr border border-[#E4E4E7] text-[14px] rounded-md shadow-sm hover:bg-[#F8FAFC]">
+          <Select.Value placeholder={placeholder} />
+          <Select.Icon>
+            <IconChevronDown size={14} />
+          </Select.Icon>
+        </Select.Trigger>
+      )}
       <Select.Portal>
         <Select.Content className="overflow-hidden bg-white rounded-md shadow-sm">
           <Select.Viewport className="p-4pxr">
