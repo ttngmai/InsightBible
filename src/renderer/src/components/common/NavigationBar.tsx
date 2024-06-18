@@ -233,15 +233,21 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                       .map((el) => ({
                         key: String(el.chapter),
                         value: String(el.chapter),
-                        text: `${el.chapter}장`
+                        text: `${el.chapter}${el.book !== 19 ? '장' : '편'}`
                       }))}
                     value={String(chapter)}
                     setValue={(value) => searchBible(book, Number(value), 1)}
                   >
                     <div className="flex justify-center items-center mx-16pxr text-[18px] font-bold">
-                      <span>{chapter}장</span>
+                      <span>
+                        {chapter}
+                        {book !== 19 ? '장' : '편'}
+                      </span>
                       <span className="mx-8pxr">/</span>
-                      <span>{lastChapter}장</span>
+                      <span>
+                        {lastChapter}
+                        {book !== 19 ? '장' : '편'}
+                      </span>
                     </div>
                   </CustomSelect>
                   <Button

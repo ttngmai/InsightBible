@@ -208,7 +208,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
             tw`py-24pxr text-[1.25em] text-center`,
             !isLight(bibleBackgroundColor) && tw`text-white`
           ]}
-        >{`${bookName} ${chapter}장`}</h1>
+        >{`${bookName} ${chapter}${book !== 19 ? '장' : '편'}`}</h1>
         {renderVerseList()}
       </div>
       <div className="h-screen" />

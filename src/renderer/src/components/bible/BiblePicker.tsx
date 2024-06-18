@@ -26,7 +26,7 @@ function BiblePicker({
     .map((el) => ({
       key: String(el.chapter),
       value: String(el.chapter),
-      text: `${el.chapter}장`
+      text: `${el.chapter}${el.book !== 19 ? '장' : '편'}`
     }))
 
   return (
