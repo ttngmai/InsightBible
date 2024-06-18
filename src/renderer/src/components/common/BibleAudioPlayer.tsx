@@ -312,7 +312,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
               </div>
             </div>
             <span className="flex w-full ml-8pxr">
-              {formatTime(currentTime)} / {formatTime(duration)}
+              {formatTime(currentTime / playbackRate)} / {formatTime(duration / playbackRate)}
             </span>
             <div>
               <DropdownMenu.Root>
