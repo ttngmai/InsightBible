@@ -179,6 +179,11 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
 
   useEffect(() => {
     if (currentReadingPosition !== null && bibleData.length > 0) {
+      if (currentReadingPosition === 0 && titleRef.current) {
+        titleRef.current.scrollIntoView({ block: 'center' })
+        return
+      }
+
       const currentVerseRef = verseRefs.current
         .filter((el) => el instanceof HTMLElement)
         .find((el) => Number(el?.dataset?.verse) === currentReadingPosition)
