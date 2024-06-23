@@ -124,12 +124,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   }, [currentTime, duration])
 
   useEffect(() => {
-    if (seeking) {
-      setPlaying(false)
-    }
-  }, [seeking])
-
-  useEffect(() => {
     setProgressInterval(playbackRate < 3 ? 300 : 150)
   }, [playbackRate])
 
@@ -262,7 +256,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
           ref={playerRef}
           controls={false}
           url={url}
-          playing={playing}
+          playing={playing && !seeking}
           muted={muted}
           volume={volume}
           playbackRate={playbackRate}
