@@ -52,10 +52,12 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [openBibleTextColorPickerModal, setOpenBibleTextColorPickerModal] = useState<boolean>(false)
   const [openCurrentReadingTextColorPickerModal, setOpenCurrentReadingTextColorPickerModal] =
     useState<boolean>(false)
-  const [startBook, setStartBook] = useState<string>('1')
-  const [startChapter, setStartChapter] = useState<string>('1')
-  const [endBook, setEndBook] = useState<string>('1')
-  const [endChapter, setEndChapter] = useState<string>('1')
+  const [startBook, setStartBook] = useState<string>(String(readingRange?.startBook || '1'))
+  const [startChapter, setStartChapter] = useState<string>(
+    String(readingRange?.startChapter || '1')
+  )
+  const [endBook, setEndBook] = useState<string>(String(readingRange?.endBook || '1'))
+  const [endChapter, setEndChapter] = useState<string>(String(readingRange?.endChapter || '1'))
 
   const handleReadingRange = (): void => {
     setReadingRange({
