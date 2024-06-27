@@ -4,15 +4,25 @@ import {
   readWriteBibleBackgroundColorAtom,
   readWriteBibleTextColorAtom,
   readWriteCurrentReadingTextColorAtom,
-  readWriteBibleTextSizeAtom
+  readWriteBibleTextSizeAtom,
+  readWriteReadingRangeAtom
 } from '@renderer/store'
-import { IconHighlight, IconPaint, IconPalette, IconTextSize } from '@tabler/icons-react'
-import { useState } from 'react'
+import {
+  IconArrowAutofitWidth,
+  IconCircleCheck,
+  IconCircleX,
+  IconHighlight,
+  IconPaint,
+  IconPalette,
+  IconTextSize
+} from '@tabler/icons-react'
+import { useEffect, useState } from 'react'
 import Button from './common/Button'
 import ColorPickerModal from './ColorPickerModal'
 import ModalPortal from '@renderer/utils/ModalPortal'
 import tw, { css } from 'twin.macro'
 import CustomSelect from './common/CustomSelect'
+import BiblePicker from './bible/BiblePicker'
 
 type SettingsModalProps = {
   onClose: () => void
@@ -35,17 +45,109 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [currentReadingTextColor, setCurrentReadingTextColor] = useAtom(
     readWriteCurrentReadingTextColorAtom
   )
+  const [readingRange, setReadingRange] = useAtom(readWriteReadingRangeAtom)
 
   const [openBibleBackgroundColorPickerModal, setOpenBibleBackgroundColorPickerModal] =
     useState<boolean>(false)
   const [openBibleTextColorPickerModal, setOpenBibleTextColorPickerModal] = useState<boolean>(false)
   const [openCurrentReadingTextColorPickerModal, setOpenCurrentReadingTextColorPickerModal] =
     useState<boolean>(false)
+  const [startBook, setStartBook] = useState<string>('1')
+  const [startChapter, setStartChapter] = useState<string>('1')
+  const [endBook, setEndBook] = useState<string>('1')
+  const [endChapter, setEndChapter] = useState<string>('1')
+
+  const handleReadingRange = (): void => {
+    setReadingRange({
+      startBook: Number(startBook),
+      startChapter: Number(startChapter),
+      endBook: Number(endBook),
+      endChapter: Number(endChapter)
+    })
+  }
+
+  const handleResetReadingRange = (): void => {
+    setReadingRange(null)
+  }
+
+  useEffect(() => {
+    const start = `${startBook.padStart(2, '0')}${startChapter.padStart(3, '0')}`
+    const end = `${endBook.padStart(2, '0')}${endChapter.padStart(3, '0')}`
+
+    if (start > end) {
+      setEndBook(startBook)
+      setEndChapter(startChapter)
+    }
+  }, [startBook, startChapter])
+
+  useEffect(() => {
+    const start = `${startBook.padStart(2, '0')}${startChapter.padStart(3, '0')}`
+    const end = `${endBook.padStart(2, '0')}${endChapter.padStart(3, '0')}`
+
+    if (end < start) {
+      setStartBook(endBook)
+      setStartChapter(endChapter)
+    }
+  }, [endBook, endChapter])
 
   return (
     <>
       <Modal title="설정" onClose={onClose}>
         <div className="flex flex-col justify-center items-center w-600pxr h-360pxr p-16pxr bg-white">
+          <div className="flex flex-col items-center gap-8pxr py-8pxr mb-8pxr">
+            <div className="flex items-center gap-8pxr h-32pxr font-bold">
+              <IconArrowAutofitWidth size={18} />
+              <span>낭독범위</span>
+              {readingRange !== null && (
+                <Button type="button" onClick={handleResetReadingRange} variant="ghost">
+                  <IconCircleX size={18} />
+                  <span className="pl-4pxr">해제</span>
+                </Button>
+              )}
+            </div>
+            <div className="flex items-center gap-8pxr">
+              <div className="flex flex-col gap-4pxr">
+                <div className="flex items-center gap-4pxr">
+                  <BiblePicker
+                    book={startBook}
+                    chapter={startChapter}
+                    onBookChange={(value: string) => {
+                      setStartBook(value)
+                      setStartChapter('1')
+                    }}
+                    onChapterChange={(value: string) => {
+                      setStartChapter(value)
+                    }}
+                    disabled={readingRange !== null}
+                  />
+                  <span className="ml-auto">부터</span>
+                </div>
+                <div className="flex items-center gap-4pxr">
+                  <BiblePicker
+                    book={endBook}
+                    chapter={endChapter}
+                    onBookChange={(value: string) => {
+                      setEndBook(value)
+                      setEndChapter('1')
+                    }}
+                    onChapterChange={(value: string) => {
+                      setEndChapter(value)
+                    }}
+                    disabled={readingRange !== null}
+                  />
+                  <span className="ml-auto">까지</span>
+                </div>
+              </div>
+              {readingRange === null ? (
+                <Button type="button" onClick={handleReadingRange} variant="ghost" sx={tw`w-60pxr`}>
+                  <IconCircleCheck size={18} />
+                  <span className="px-4pxr">적용</span>
+                </Button>
+              ) : (
+                <span className="w-60pxr px-4pxr">적용 중</span>
+              )}
+            </div>
+          </div>
           <table css={[contentTableStyle, tw`w-200pxr`]}>
             <tr>
               <th>

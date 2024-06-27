@@ -266,7 +266,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
               decorative
               orientation="vertical"
             />
-            <div className="flex items-center shrink-0 w-360pxr h-40pxr">
+            <div className="flex items-center shrink-0 w-300pxr h-40pxr">
               <BibleAudioPlayer url={bibleSoundFileLocation} onProgress={handleProgress} />
             </div>
             <Separator.Root

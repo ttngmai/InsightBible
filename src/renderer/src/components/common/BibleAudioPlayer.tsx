@@ -5,9 +5,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Button from './Button'
 import {
   IconAdjustmentsHorizontal,
-  IconArrowAutofitWidth,
   IconChevronRight,
-  IconCircleX,
   IconPlayerPause,
   IconPlayerPlay,
   IconVolume,
@@ -23,9 +21,7 @@ import {
   readWriteReadingRangeAtom,
   readWriteVoiceTypeAtom
 } from '@renderer/store'
-import * as Popover from '@radix-ui/react-popover'
 import { bibleCountInfo } from '@shared/constants'
-import BiblePicker from '../bible/BiblePicker'
 import useSearchBible from '@renderer/hooks/useSearchBible'
 
 type BibleAudioPlayerProps = {
@@ -49,10 +45,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   const [volume, setVolume] = useState<number>(0.5)
   const [playbackRate, setPlaybackRate] = useState<number>(1.0)
   const [progressInterval, setProgressInterval] = useState<number>(300)
-  const [startBook, setStartBook] = useState<string>('1')
-  const [startChapter, setStartChapter] = useState<string>('1')
-  const [endBook, setEndBook] = useState<string>('1')
-  const [endChapter, setEndChapter] = useState<string>('1')
   const [lastChapter, setLastChapter] = useState<number>(0)
 
   const searchBible = useSearchBible()
@@ -85,20 +77,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
     setMuted(volume[0] === 0 ? true : false)
   }
 
-  const handleReadingRange = (): void => {
-    setReadingRange({
-      startBook: Number(startBook),
-      startChapter: Number(startChapter),
-      endBook: Number(endBook),
-      endChapter: Number(endChapter)
-    })
-  }
-
-  const handleResetReadingRange = (): void => {
-    setReadingRange(null)
-    setPlaying(false)
-  }
-
   const handleEnded = (): void => {
     if (readingRange === null) return
 
@@ -128,26 +106,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   }, [playbackRate])
 
   useEffect(() => {
-    const start = `${startBook.padStart(2, '0')}${startChapter.padStart(3, '0')}`
-    const end = `${endBook.padStart(2, '0')}${endChapter.padStart(3, '0')}`
-
-    if (start > end) {
-      setEndBook(startBook)
-      setEndChapter(startChapter)
-    }
-  }, [startBook, startChapter])
-
-  useEffect(() => {
-    const start = `${startBook.padStart(2, '0')}${startChapter.padStart(3, '0')}`
-    const end = `${endBook.padStart(2, '0')}${endChapter.padStart(3, '0')}`
-
-    if (end < start) {
-      setStartBook(endBook)
-      setStartChapter(endChapter)
-    }
-  }, [endBook, endChapter])
-
-  useEffect(() => {
     if (readingRange === null) return
 
     if (book !== readingRange.startBook || chapter !== readingRange.startChapter) {
@@ -157,7 +115,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
     if (playerRef.current) {
       playerRef.current.seekTo(0)
     }
-    setPlaying(true)
   }, [readingRange])
 
   useEffect(() => {
@@ -182,207 +139,137 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   }, [book, chapter])
 
   return (
-    <>
-      <div className="flex shrink-0">
-        <Popover.Root>
-          <Popover.Trigger asChild>
-            <button
-              type="button"
-              className="inline-flex justify-center items-center w-85pxr h-32pxr p-4pxr text-[14px] border text-white bg-brand-blue-500 shadow rounded-md mr-8pxr disabled:border-[#bdc4d4] disabled:bg-[#efefef] disabled:text-[#333] disabled:shadow-none disabled:cursor-not-allowed"
-            >
-              {readingRange === null ? (
-                <>
-                  <IconArrowAutofitWidth size={18} />
-                  <span className="pl-4pxr">낭독범위</span>
-                </>
-              ) : (
-                <span className="pl-4pxr">낭독중...</span>
-              )}
-            </button>
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content className="p-4pxr rounded border bg-white">
-              <div className="flex flex-col gap-4pxr">
-                <div className="flex items-center gap-4pxr">
-                  <BiblePicker
-                    book={startBook}
-                    chapter={startChapter}
-                    onBookChange={(value: string) => {
-                      setStartBook(value)
-                      setStartChapter('1')
-                    }}
-                    onChapterChange={(value: string) => {
-                      setStartChapter(value)
-                    }}
-                    disabled={readingRange !== null}
-                  />
-                  <span className="ml-auto">부터</span>
-                </div>
-                <div className="flex items-center gap-4pxr">
-                  <BiblePicker
-                    book={endBook}
-                    chapter={endChapter}
-                    onBookChange={(value: string) => {
-                      setEndBook(value)
-                      setEndChapter('1')
-                    }}
-                    onChapterChange={(value: string) => {
-                      setEndChapter(value)
-                    }}
-                    disabled={readingRange !== null}
-                  />
-                  <span className="ml-auto">까지</span>
-                </div>
-                {readingRange === null ? (
-                  <Button type="button" onClick={handleReadingRange} variant="ghost">
-                    <IconPlayerPlay size={18} />
-                    <span className="pl-4pxr">낭독하기</span>
-                  </Button>
-                ) : (
-                  <Button type="button" onClick={handleResetReadingRange} variant="ghost">
-                    <IconCircleX size={18} />
-                    <span className="pl-4pxr">낭독중지</span>
-                  </Button>
-                )}
-              </div>
-              <Popover.Arrow className="fill-gray-300" />
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover.Root>
-      </div>
-
-      <div className="relative w-full h-full">
-        <ReactPlayer
-          ref={playerRef}
-          controls={false}
-          url={url}
-          playing={playing && !seeking}
-          muted={muted}
-          volume={volume}
-          playbackRate={playbackRate}
-          onDuration={setDuration}
-          onProgress={handleProgress}
-          onEnded={handleEnded}
-          progressInterval={progressInterval}
-          width="100%"
-          height="100%"
-        />
-        <div className="absolute inset-0 flex flex-col">
-          <Slider.Root
-            max={duration}
-            step={0.1}
-            value={[currentTime]}
-            onValueChange={handleSliderChange}
-            onPointerDown={() => setSeeking(true)}
-            onPointerUp={() => setSeeking(false)}
-            className="flex items-center grow h-full select-none touch-none"
-          >
-            <Slider.Track className="relative grow h-4pxr bg-gray-300 rounded-full">
-              <Slider.Range className="absolute h-full bg-brand-blue-500 rounded-full" />
-            </Slider.Track>
-            <Slider.Thumb className="block w-10pxr h-10pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
-          </Slider.Root>
-          <div className="flex justify-between items-center">
-            <div className="flex">
-              <Button type="button" onClick={handlePlayOrPause} variant="ghost" size="icon">
-                {playing ? <IconPlayerPause size={18} /> : <IconPlayerPlay size={18} />}
-              </Button>
-              <Button type="button" onClick={handleMuted} variant="ghost" size="icon">
-                {muted ? <IconVolumeOff size={18} /> : <IconVolume size={18} />}
-              </Button>
-              <div className="relative w-50pxr ml-2pxr">
-                <Slider.Root
-                  max={1}
-                  step={0.1}
-                  value={muted ? [0] : [volume]}
-                  onValueChange={handleVolumeChange}
-                  className="flex items-center grow h-full select-none touch-none"
+    <div className="relative w-full h-full">
+      <ReactPlayer
+        ref={playerRef}
+        controls={false}
+        url={url}
+        playing={playing && !seeking}
+        muted={muted}
+        volume={volume}
+        playbackRate={playbackRate}
+        onDuration={setDuration}
+        onProgress={handleProgress}
+        onEnded={handleEnded}
+        progressInterval={progressInterval}
+        width="100%"
+        height="100%"
+      />
+      <div className="absolute inset-0 flex flex-col">
+        <Slider.Root
+          max={duration}
+          step={0.1}
+          value={[currentTime]}
+          onValueChange={handleSliderChange}
+          onPointerDown={() => setSeeking(true)}
+          onPointerUp={() => setSeeking(false)}
+          className="flex items-center grow h-full select-none touch-none"
+        >
+          <Slider.Track className="relative grow h-4pxr bg-gray-300 rounded-full">
+            <Slider.Range className="absolute h-full bg-brand-blue-500 rounded-full" />
+          </Slider.Track>
+          <Slider.Thumb className="block w-10pxr h-10pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
+        </Slider.Root>
+        <div className="flex justify-between items-center">
+          <div className="flex">
+            <Button type="button" onClick={handlePlayOrPause} variant="ghost" size="icon">
+              {playing ? <IconPlayerPause size={18} /> : <IconPlayerPlay size={18} />}
+            </Button>
+            <Button type="button" onClick={handleMuted} variant="ghost" size="icon">
+              {muted ? <IconVolumeOff size={18} /> : <IconVolume size={18} />}
+            </Button>
+            <div className="relative w-50pxr ml-2pxr">
+              <Slider.Root
+                max={1}
+                step={0.1}
+                value={muted ? [0] : [volume]}
+                onValueChange={handleVolumeChange}
+                className="flex items-center grow h-full select-none touch-none"
+              >
+                <Slider.Track className="relative grow h-3pxr bg-gray-300 rounded-full">
+                  <Slider.Range className="absolute h-full bg-brand-blue-500 rounded-full" />
+                </Slider.Track>
+                <Slider.Thumb className="block w-8pxr h-8pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
+              </Slider.Root>
+            </div>
+          </div>
+          <span className="flex w-full ml-8pxr">
+            {formatTime(currentTime / playbackRate)} / {formatTime(duration / playbackRate)}
+          </span>
+          <div>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center h-32pxr w-32pxr rounded-md cursor-pointer hover:bg-[#F4F4F5]"
                 >
-                  <Slider.Track className="relative grow h-3pxr bg-gray-300 rounded-full">
-                    <Slider.Range className="absolute h-full bg-brand-blue-500 rounded-full" />
-                  </Slider.Track>
-                  <Slider.Thumb className="block w-8pxr h-8pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
-                </Slider.Root>
-              </div>
-            </div>
-            <span className="flex w-full ml-8pxr">
-              {formatTime(currentTime / playbackRate)} / {formatTime(duration / playbackRate)}
-            </span>
-            <div>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <button
-                    type="button"
-                    className="inline-flex justify-center items-center h-32pxr w-32pxr rounded-md cursor-pointer hover:bg-[#F4F4F5]"
-                  >
-                    <IconAdjustmentsHorizontal size={18} />
-                  </button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content className="w-120pxr rounded border bg-white" align="end">
-                    <DropdownMenu.Sub>
-                      <DropdownMenu.SubTrigger className="flex items-center px-8pxr py-2pxr cursor-pointer select-none outline-none">
-                        재생 속도
-                        <div className="ml-auto -mr-4pxr">
-                          <IconChevronRight size={18} />
+                  <IconAdjustmentsHorizontal size={18} />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content className="w-120pxr rounded border bg-white" align="end">
+                  <DropdownMenu.Sub>
+                    <DropdownMenu.SubTrigger className="flex items-center px-8pxr py-2pxr cursor-pointer select-none outline-none">
+                      재생 속도
+                      <div className="ml-auto -mr-4pxr">
+                        <IconChevronRight size={18} />
+                      </div>
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.SubContent
+                        sideOffset={2}
+                        className="w-120pxr rounded border bg-white overflow-hidden"
+                      >
+                        <div className="flex flex-col justify-center items-center p-8pxr">
+                          <input
+                            type="range"
+                            min="1.0"
+                            max="5.0"
+                            step="0.1"
+                            value={playbackRate}
+                            onChange={(event) => handlePlaybackRate(Number(event.target.value))}
+                            style={{ writingMode: 'vertical-lr', direction: 'rtl' }}
+                          />
+                          <span>{playbackRate.toFixed(1)} 배속</span>
                         </div>
-                      </DropdownMenu.SubTrigger>
-                      <DropdownMenu.Portal>
-                        <DropdownMenu.SubContent
-                          sideOffset={2}
-                          className="w-120pxr rounded border bg-white overflow-hidden"
-                        >
-                          <div className="flex flex-col justify-center items-center p-8pxr">
-                            <input
-                              type="range"
-                              min="1.0"
-                              max="5.0"
-                              step="0.1"
-                              value={playbackRate}
-                              onChange={(event) => handlePlaybackRate(Number(event.target.value))}
-                              style={{ writingMode: 'vertical-lr', direction: 'rtl' }}
-                            />
-                            <span>{playbackRate.toFixed(1)} 배속</span>
-                          </div>
-                        </DropdownMenu.SubContent>
-                      </DropdownMenu.Portal>
-                    </DropdownMenu.Sub>
-                    <DropdownMenu.Sub>
-                      <DropdownMenu.SubTrigger className="flex items-center px-8pxr py-2pxr cursor-pointer select-none outline-none">
-                        음성 선택
-                        <div className="ml-auto -mr-4pxr">
-                          <IconChevronRight size={18} />
-                        </div>
-                      </DropdownMenu.SubTrigger>
-                      <DropdownMenu.Portal>
-                        <DropdownMenu.SubContent
-                          sideOffset={2}
-                          className="w-120pxr rounded border bg-white overflow-hidden"
-                        >
-                          {['남성', '여성'].map((voice) => (
-                            <DropdownMenu.Item
-                              key={voice}
-                              onClick={() => setVoiceType(voice)}
-                              css={[
-                                tw`px-8pxr py-2pxr cursor-pointer select-none outline-none`,
-                                voice === voiceType ? tw`bg-brand-blue-50` : tw`hover:bg-gray-100`
-                              ]}
-                            >
-                              {voice}
-                            </DropdownMenu.Item>
-                          ))}
-                        </DropdownMenu.SubContent>
-                      </DropdownMenu.Portal>
-                    </DropdownMenu.Sub>
-                    <DropdownMenu.Arrow className="fill-gray-300" />
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
-            </div>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.Sub>
+                    <DropdownMenu.SubTrigger className="flex items-center px-8pxr py-2pxr cursor-pointer select-none outline-none">
+                      음성 선택
+                      <div className="ml-auto -mr-4pxr">
+                        <IconChevronRight size={18} />
+                      </div>
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.SubContent
+                        sideOffset={2}
+                        className="w-120pxr rounded border bg-white overflow-hidden"
+                      >
+                        {['남성', '여성'].map((voice) => (
+                          <DropdownMenu.Item
+                            key={voice}
+                            onClick={() => setVoiceType(voice)}
+                            css={[
+                              tw`px-8pxr py-2pxr cursor-pointer select-none outline-none`,
+                              voice === voiceType ? tw`bg-brand-blue-50` : tw`hover:bg-gray-100`
+                            ]}
+                          >
+                            {voice}
+                          </DropdownMenu.Item>
+                        ))}
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.Arrow className="fill-gray-300" />
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
