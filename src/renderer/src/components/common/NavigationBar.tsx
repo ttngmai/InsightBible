@@ -28,7 +28,7 @@ import CustomSelect from './CustomSelect'
 import useChangeBible from '@renderer/hooks/useChangeBible'
 import BibleAudioPlayer from './BibleAudioPlayer'
 import { OnProgressProps } from 'react-player/base'
-import * as Select from '@radix-ui/react-select'
+import * as Popover from '@radix-ui/react-popover'
 import * as Separator from '@radix-ui/react-separator'
 
 type NavigationBarProps = {
@@ -188,36 +188,53 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
             />
             <div className="flex items-center shrink-0 w-300pxr">
               <div className="flex items-center gap-16pxr mx-auto">
-                <Select.Root
-                  value={String(book)}
-                  onValueChange={(value) => searchBible(Number(value), 1, 1)}
-                >
-                  <Select.Trigger>
-                    <Select.Value asChild>
-                      <span className="text-[18px] font-bold">{bookName}</span>
-                    </Select.Value>
-                  </Select.Trigger>
-                  <Select.Portal>
-                    <Select.Content className="overflow-hidden bg-white rounded-md shadow-sm">
-                      <Select.Viewport className="p-4pxr">
-                        <Select.Group>
-                          {bookInfo.map((el) => (
-                            <Select.Item
-                              key={el.id}
-                              value={String(el.id)}
-                              className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] rounded-md select-none cursor-pointer hover:bg-[#F8FAFC]"
-                            >
-                              <Select.ItemText>{el.name}</Select.ItemText>
-                              <Select.ItemIndicator className="inline-flex items-center justify-center">
-                                <IconCheck size={14} />
-                              </Select.ItemIndicator>
-                            </Select.Item>
-                          ))}
-                        </Select.Group>
-                      </Select.Viewport>
-                    </Select.Content>
-                  </Select.Portal>
-                </Select.Root>
+                <Popover.Root>
+                  <Popover.Trigger>
+                    <span className="text-[18px] font-bold">{bookName}</span>
+                  </Popover.Trigger>
+                  <Popover.Portal>
+                    <Popover.Content
+                      sideOffset={5}
+                      className="flex max-h-352pxr overflow-hidden bg-white rounded-md shadow-sm"
+                      style={{
+                        height: 'calc(var(--radix-popover-content-available-height) - 16px)'
+                      }}
+                    >
+                      <div className="flex">
+                        <div className="w-150pxr">
+                          <p className="px-8pxr py-4pxr font-bold">구약</p>
+                          <ul className="h-full overflow-y-auto">
+                            {bookInfo.slice(0, 39).map((el) => (
+                              <li
+                                key={el.id}
+                                onClick={() => searchBible(el.id, 1, 1)}
+                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] rounded-md select-none cursor-pointer hover:bg-[#F8FAFC]"
+                              >
+                                <span>{el.name}</span>
+                                {el.id === book && <IconCheck size={14} />}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="w-150pxr">
+                          <p className="px-8pxr py-4pxr font-bold">신약</p>
+                          <ul className="h-full overflow-y-auto">
+                            {bookInfo.slice(39).map((el) => (
+                              <li
+                                key={el.id}
+                                onClick={() => searchBible(el.id, 1, 1)}
+                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] rounded-md select-none cursor-pointer hover:bg-[#F8FAFC]"
+                              >
+                                <span>{el.name}</span>
+                                {el.id === book && <IconCheck size={14} />}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </Popover.Content>
+                  </Popover.Portal>
+                </Popover.Root>
                 <div className="flex items-center">
                   <Button
                     type="button"
