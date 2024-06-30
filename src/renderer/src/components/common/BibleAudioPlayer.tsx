@@ -102,7 +102,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   }, [currentTime, duration])
 
   useEffect(() => {
-    setProgressInterval(playbackRate < 3 ? 300 : 150)
+    setProgressInterval(playbackRate < 3 ? 200 : 100)
   }, [playbackRate])
 
   useEffect(() => {
