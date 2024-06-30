@@ -12,7 +12,7 @@ const store = new Store()
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    title: '보고듣는성경',
+    title: '보는 성경',
     width: 1200,
     height: 670,
     show: false,
