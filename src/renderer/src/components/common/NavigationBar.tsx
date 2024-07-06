@@ -119,15 +119,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
       setCurrentReadingPosition(null)
       setBibleSoundFileLocation(
         new URL(
-          '/src/assets/sounds/bible/' +
-            bibleName +
-            '/' +
-            voiceType +
-            '/' +
-            book +
-            '_' +
-            chapter +
-            '.mp3',
+          encodeURI(`/src/assets/sounds/bible/${bibleName}/${voiceType}/${book}_${chapter}.mp3`),
           import.meta.url
         ).toString()
       )
