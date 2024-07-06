@@ -201,9 +201,9 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                       }}
                     >
                       <div className="flex">
-                        <div className="w-150pxr">
+                        <div className="flex flex-col w-150pxr h-full">
                           <p className="px-8pxr py-4pxr font-bold">구약</p>
-                          <ul className="h-full overflow-y-auto">
+                          <ul className="overflow-y-auto">
                             {bookInfo.slice(0, 39).map((el) => (
                               <li
                                 key={el.id}
@@ -216,9 +216,9 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                             ))}
                           </ul>
                         </div>
-                        <div className="w-150pxr">
+                        <div className="flex flex-col w-150pxr h-full">
                           <p className="px-8pxr py-4pxr font-bold">신약</p>
-                          <ul className="h-full overflow-y-auto">
+                          <ul className="overflow-y-auto">
                             {bookInfo.slice(39).map((el) => (
                               <li
                                 key={el.id}
