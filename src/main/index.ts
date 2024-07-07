@@ -6,6 +6,7 @@ import { findBible } from '@/repository/BibleRepository.js'
 import Store from 'electron-store'
 import { fileURLToPath } from 'url'
 import { findBibleSoundTimeStamp } from './repository/BibleSoundTimeStampRepository.js'
+import path from 'path'
 
 const store = new Store()
 
@@ -70,6 +71,13 @@ app.whenReady().then(() => {
   ipcMain.handle('findBibleSoundTimeStamp', (_, ...args: Parameters<TFindBibleSoundTimeStamp>) =>
     findBibleSoundTimeStamp(...args)
   )
+  ipcMain.handle('getAudioFilePath', (_, fileName) => {
+    const filePath =
+      process.env.NODE_ENV === 'development'
+        ? `src/audios/${fileName}`
+        : path.join(process.resourcesPath, `./audios/${fileName}`)
+    return filePath
+  })
 
   createWindow()
 

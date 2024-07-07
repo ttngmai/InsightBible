@@ -25,7 +25,8 @@ try {
   contextBridge.exposeInMainWorld('context', {
     findBible: (...args: Parameters<TFindBible>) => ipcRenderer.invoke('findBible', ...args),
     findBibleSoundTimeStamp: (...args: Parameters<TFindBibleSoundTimeStamp>) =>
-      ipcRenderer.invoke('findBibleSoundTimeStamp', ...args)
+      ipcRenderer.invoke('findBibleSoundTimeStamp', ...args),
+    getAudioFilePath: (fileName: string) => ipcRenderer.invoke('getAudioFilePath', fileName)
   })
 } catch (error) {
   console.error(error)

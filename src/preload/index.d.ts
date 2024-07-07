@@ -14,6 +14,7 @@ declare global {
     context: {
       findBible: TFindBible
       findBibleSoundTimeStamp: TFindBibleSoundTimeStamp
+      getAudioFilePath: (fileName: string) => string
     }
   }
 }

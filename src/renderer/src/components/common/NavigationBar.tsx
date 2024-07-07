@@ -116,18 +116,18 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
 
   useEffect(() => {
     ;(async (): Promise<void> => {
-      setCurrentReadingPosition(null)
-      setBibleSoundFileLocation(
-        new URL(
-          encodeURI(`/src/assets/sounds/bible/${bibleName}/${voiceType}/${book}_${chapter}.mp3`),
-          import.meta.url
-        ).toString()
+      const audioFilePath = await window.context.getAudioFilePath(
+        `bible/${bibleName}/${voiceType}/${book}_${chapter}.mp3`
       )
+      console.log(audioFilePath)
       const timeStamp = await window.context.findBibleSoundTimeStamp(
         `${bibleName}_${voiceType}음성_타임스탬프`,
         book,
         chapter
       )
+
+      setCurrentReadingPosition(null)
+      setBibleSoundFileLocation(`file://${audioFilePath}`)
       setBibleSoundTimeStamp(timeStamp)
     })()
   }, [bibleName, book, chapter, voiceType])
