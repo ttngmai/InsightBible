@@ -26,7 +26,7 @@ import SettingsModal from '../SettingsModal'
 import useSearchBible from '@renderer/hooks/useSearchBible'
 import CustomSelect from './CustomSelect'
 import useChangeBible from '@renderer/hooks/useChangeBible'
-import BibleAudioPlayer from './BibleAudioPlayer'
+import BibleAudioPlayer from '../bible/BibleAudioPlayer'
 import { OnProgressProps } from 'react-player/base'
 import * as Popover from '@radix-ui/react-popover'
 import * as Separator from '@radix-ui/react-separator'
@@ -140,7 +140,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
             type="button"
             onClick={() => handleScroll(-1)}
             variant="ghost"
-            sx={tw`sticky left-0 h-60pxr bg-white rounded-none border border-t-0 border-gray-300`}
+            sx={tw`sticky left-0 h-60pxr border border-t-0 border-gray-300 bg-white rounded-none`}
           >
             <IconChevronLeft size={18} />
           </Button>
@@ -192,15 +192,17 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                         height: 'calc(var(--radix-popover-content-available-height) - 16px)'
                       }}
                     >
-                      <div className="flex">
-                        <div className="flex flex-col w-150pxr h-full">
-                          <p className="px-8pxr py-4pxr font-bold">구약</p>
-                          <ul className="overflow-y-auto">
+                      <div className="flex w-300pxr">
+                        <div className="flex flex-col flex-1 h-full">
+                          <p className="h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
+                            구약
+                          </p>
+                          <ul className="overflow-y-auto scroll-hidden">
                             {bookInfo.slice(0, 39).map((el) => (
                               <li
                                 key={el.id}
                                 onClick={() => searchBible(el.id, 1, 1)}
-                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] rounded-md select-none cursor-pointer hover:bg-[#F8FAFC]"
+                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:bg-[#F8FAFC] hover:font-bold"
                               >
                                 <span>{el.name}</span>
                                 {el.id === book && <IconCheck size={14} />}
@@ -208,14 +210,16 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                             ))}
                           </ul>
                         </div>
-                        <div className="flex flex-col w-150pxr h-full">
-                          <p className="px-8pxr py-4pxr font-bold">신약</p>
-                          <ul className="overflow-y-auto">
+                        <div className="flex flex-col flex-1 h-full">
+                          <p className="h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
+                            신약
+                          </p>
+                          <ul className="overflow-y-auto scroll-hidden">
                             {bookInfo.slice(39).map((el) => (
                               <li
                                 key={el.id}
                                 onClick={() => searchBible(el.id, 1, 1)}
-                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] rounded-md select-none cursor-pointer hover:bg-[#F8FAFC]"
+                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:bg-[#F8FAFC] hover:font-bold"
                               >
                                 <span>{el.name}</span>
                                 {el.id === book && <IconCheck size={14} />}
@@ -224,6 +228,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                           </ul>
                         </div>
                       </div>
+                      <Popover.Arrow className="fill-gray-300" />
                     </Popover.Content>
                   </Popover.Portal>
                 </Popover.Root>

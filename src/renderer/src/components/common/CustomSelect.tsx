@@ -62,7 +62,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
     return (
       <Select.Item
         ref={ref}
-        className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] rounded-md select-none cursor-pointer hover:bg-[#F8FAFC]"
+        className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:bg-[#F8FAFC] hover:font-bold"
         value={value}
         disabled={disabled}
       >

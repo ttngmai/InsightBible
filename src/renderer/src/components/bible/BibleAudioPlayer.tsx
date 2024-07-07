@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import * as Slider from '@radix-ui/react-slider'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import Button from './Button'
+import Button from '../common/Button'
 import {
   IconAdjustmentsHorizontal,
+  IconArrowAutofitWidth,
   IconChevronRight,
   IconPlayerPause,
   IconPlayerPlay,
@@ -21,8 +22,9 @@ import {
   readWriteReadingRangeAtom,
   readWriteVoiceTypeAtom
 } from '@renderer/store'
-import { bibleCountInfo } from '@shared/constants'
+import { bibleCountInfo, bookInfo } from '@shared/constants'
 import useSearchBible from '@renderer/hooks/useSearchBible'
+import * as Popover from '@radix-ui/react-popover'
 
 type BibleAudioPlayerProps = {
   url: string
@@ -46,6 +48,8 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   const [playbackRate, setPlaybackRate] = useState<number>(1.0)
   const [progressInterval, setProgressInterval] = useState<number>(300)
   const [lastChapter, setLastChapter] = useState<number>(0)
+  const [startBook, setStartBook] = useState<number | null>(null)
+  const [endBook, setEndBook] = useState<number | null>(null)
 
   const searchBible = useSearchBible()
 
@@ -95,6 +99,28 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
     }
   }
 
+  const handleReadingRange = (value: number): void => {
+    if (startBook && endBook) {
+      setStartBook(value)
+      setEndBook(null)
+    } else if (startBook) {
+      if (startBook <= value) {
+        setEndBook(value)
+      } else {
+        setStartBook(value)
+        setEndBook(startBook)
+      }
+    } else {
+      setStartBook(value)
+    }
+  }
+
+  const handleResetReadingRange = (): void => {
+    setStartBook(null)
+    setEndBook(null)
+    setReadingRange(null)
+  }
+
   useEffect(() => {
     if (seeking && playerRef.current) {
       playerRef.current.seekTo(currentTime / duration, 'fraction')
@@ -106,7 +132,11 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   }, [playbackRate])
 
   useEffect(() => {
-    if (readingRange === null) return
+    if (readingRange === null) {
+      setStartBook(null)
+      setEndBook(null)
+      return
+    }
 
     if (book !== readingRange.startBook || chapter !== readingRange.startChapter) {
       searchBible(readingRange.startBook, readingRange.startChapter, 1)
@@ -137,6 +167,23 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
       setReadingRange(null)
     }
   }, [book, chapter])
+
+  useEffect(() => {
+    if (startBook === null || endBook === null) return
+
+    const endChapter =
+      bibleCountInfo
+        .filter((el) => el.book === endBook)
+        .map((el) => el.chapter)
+        .sort((a, b) => b - a)[0] || 0
+
+    setReadingRange({
+      startBook: Number(startBook),
+      startChapter: 1,
+      endBook: Number(endBook),
+      endChapter: Number(endChapter)
+    })
+  }, [startBook, endBook])
 
   return (
     <div className="relative w-full h-full">
@@ -193,10 +240,91 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
               </Slider.Root>
             </div>
           </div>
-          <span className="flex w-full ml-8pxr">
+          <span>
             {formatTime(currentTime / playbackRate)} / {formatTime(duration / playbackRate)}
           </span>
           <div>
+            <Popover.Root>
+              <Popover.Trigger>
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center h-32pxr w-32pxr rounded-md cursor-pointer hover:bg-[#F4F4F5]"
+                >
+                  <IconArrowAutofitWidth size={18} />
+                </button>
+              </Popover.Trigger>
+              <Popover.Portal>
+                <Popover.Content
+                  sideOffset={5}
+                  className="flex max-h-352pxr overflow-hidden bg-white rounded-md shadow-sm"
+                  style={{
+                    height: 'calc(var(--radix-popover-content-available-height) - 16px)'
+                  }}
+                >
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-4pxr `h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px]">
+                      {startBook === null && endBook === null ? (
+                        <span>낭독 범위를 지정해 주세요</span>
+                      ) : (
+                        <>
+                          <span className="font-bold">
+                            {bookInfo.find((el) => el.id === startBook)?.name || '?'}
+                          </span>
+                          <span>부터</span>
+                          <span className="font-bold">
+                            {bookInfo.find((el) => el.id === endBook)?.name || '?'}
+                          </span>
+                          <span>까지 낭독</span>
+                          <Button
+                            type="button"
+                            onClick={handleResetReadingRange}
+                            variant="ghost"
+                            sx={tw`h-16pxr ml-auto`}
+                          >
+                            초기화
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex h-[calc(100%-32px)] w-300pxr">
+                      <ul className="flex-1 overflow-y-auto scroll-hidden">
+                        {bookInfo.slice(0, 39).map((el) => (
+                          <li
+                            key={el.id}
+                            onClick={() => handleReadingRange(el.id)}
+                            className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
+                            css={[
+                              startBook && endBook && startBook <= el.id && el.id <= endBook
+                                ? tw`bg-brand-blue-50`
+                                : tw`hover:bg-[#F8FAFC]`
+                            ]}
+                          >
+                            <span>{el.name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <ul className="flex-1 overflow-y-auto scroll-hidden">
+                        {bookInfo.slice(39).map((el) => (
+                          <li
+                            key={el.id}
+                            onClick={() => handleReadingRange(el.id)}
+                            className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
+                            css={[
+                              startBook && endBook && startBook <= el.id && el.id <= endBook
+                                ? tw`bg-brand-blue-50`
+                                : tw`hover:bg-[#F8FAFC]`
+                            ]}
+                          >
+                            <span>{el.name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  <Popover.Arrow className="fill-gray-300" />
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <button

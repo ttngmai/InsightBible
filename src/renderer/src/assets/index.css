@@ -14,4 +14,8 @@
   [hidden] {
     display: none !important;
   }
+
+  .scroll-hidden::-webkit-scrollbar {
+    display: none;
+  }
 }
