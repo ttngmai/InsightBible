@@ -262,31 +262,31 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                   }}
                 >
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-4pxr `h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px]">
+                    <div className="flex items-center gap-4pxr h-40pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px]">
                       {startBook === null && endBook === null ? (
-                        <span>낭독 범위를 지정해 주세요</span>
+                        <span>낭독 범위 지정</span>
                       ) : (
                         <>
                           <span className="font-bold">
                             {bookInfo.find((el) => el.id === startBook)?.name || '?'}
                           </span>
-                          <span>부터</span>
+                          <span>~</span>
                           <span className="font-bold">
                             {bookInfo.find((el) => el.id === endBook)?.name || '?'}
                           </span>
-                          <span>까지 낭독</span>
+                          <span>낭독</span>
                           <Button
                             type="button"
                             onClick={handleResetReadingRange}
                             variant="ghost"
-                            sx={tw`h-16pxr ml-auto`}
+                            sx={tw`h-16pxr ml-auto text-red-500`}
                           >
-                            초기화
+                            해제
                           </Button>
                         </>
                       )}
                     </div>
-                    <div className="flex h-[calc(100%-32px)] w-300pxr">
+                    <div className="flex h-[calc(100%-32px)] w-240pxr">
                       <ul className="flex-1 overflow-y-auto scroll-hidden">
                         {bookInfo.slice(0, 39).map((el) => (
                           <li
@@ -294,7 +294,8 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                             onClick={() => handleReadingRange(el.id)}
                             className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
                             css={[
-                              startBook && endBook && startBook <= el.id && el.id <= endBook
+                              (startBook && endBook && startBook <= el.id && el.id <= endBook) ||
+                              startBook === el.id
                                 ? tw`bg-brand-blue-50`
                                 : tw`hover:bg-[#F8FAFC]`
                             ]}
@@ -310,7 +311,8 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                             onClick={() => handleReadingRange(el.id)}
                             className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
                             css={[
-                              startBook && endBook && startBook <= el.id && el.id <= endBook
+                              (startBook && endBook && startBook <= el.id && el.id <= endBook) ||
+                              startBook === el.id
                                 ? tw`bg-brand-blue-50`
                                 : tw`hover:bg-[#F8FAFC]`
                             ]}

@@ -45,7 +45,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   return (
     <>
       <Modal title="설정" onClose={onClose}>
-        <div className="flex flex-col justify-center items-center w-600pxr h-360pxr p-16pxr bg-white">
+        <div className="flex flex-col justify-center items-center w-360pxr h-240pxr p-16pxr bg-white">
           <table css={[contentTableStyle, tw`w-200pxr`]}>
             <tr>
               <th>

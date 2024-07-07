@@ -119,7 +119,6 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
       const audioFilePath = await window.context.getAudioFilePath(
         `bible/${bibleName}/${voiceType}/${book}_${chapter}.mp3`
       )
-      console.log(audioFilePath)
       const timeStamp = await window.context.findBibleSoundTimeStamp(
         `${bibleName}_${voiceType}음성_타임스탬프`,
         book,
@@ -192,9 +191,9 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                         height: 'calc(var(--radix-popover-content-available-height) - 16px)'
                       }}
                     >
-                      <div className="flex w-300pxr">
+                      <div className="flex w-240pxr">
                         <div className="flex flex-col flex-1 h-full">
-                          <p className="h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
+                          <p className="shrink-0 flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
                             구약
                           </p>
                           <ul className="overflow-y-auto scroll-hidden">
@@ -211,7 +210,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                           </ul>
                         </div>
                         <div className="flex flex-col flex-1 h-full">
-                          <p className="h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
+                          <p className="shrink-0 flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
                             신약
                           </p>
                           <ul className="overflow-y-auto scroll-hidden">
