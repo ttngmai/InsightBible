@@ -3,7 +3,6 @@ import Button from './Button'
 import {
   IconArrowLeft,
   IconArrowRight,
-  IconCheck,
   IconChevronLeft,
   IconChevronRight,
   IconSettings
@@ -19,6 +18,7 @@ import {
   readWriteBookAtom,
   readWriteChapterAtom,
   readWriteCurrentReadingPositionAtom,
+  readWriteReadingRangeAtom,
   readWriteVerseAtom,
   readWriteVoiceTypeAtom
 } from '@renderer/store'
@@ -43,6 +43,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
   const chapter = useAtomValue(readWriteChapterAtom)
   const verse = useAtomValue(readWriteVerseAtom)
   const voiceType = useAtomValue(readWriteVoiceTypeAtom)
+  const [readingRange, setReadingRange] = useAtom(readWriteReadingRangeAtom)
   const [bibleSoundTimeStamp, setBibleSoundTimeStamp] = useAtom(readWriteBibleSoundTimeStampAtom)
   const [currentReadingPosition, setCurrentReadingPosition] = useAtom(
     readWriteCurrentReadingPositionAtom
@@ -52,6 +53,8 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
   const [canScrollRight, setCanScrollRight] = useState<boolean>(false)
   const [lastChapter, setLastChapter] = useState<number>(0)
   const [bibleSoundFileLocation, setBibleSoundFileLocation] = useState<string>('')
+  const [readingStartBook, setReadingStartBook] = useState<number | null>(null)
+  const [readingEndBook, setReadingEndBook] = useState<number | null>(null)
   const [openBibleSearchModal, setOpenBibleSearchModal] = useState<boolean>(false)
   const [openSettingsModal, setOpenSettingsModal] = useState<boolean>(false)
 
@@ -59,6 +62,28 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
 
   const changeBible = useChangeBible()
   const searchBible = useSearchBible()
+
+  const handleReadingRange = (value: number): void => {
+    if (readingStartBook && readingEndBook) {
+      setReadingStartBook(value)
+      setReadingEndBook(null)
+    } else if (readingStartBook) {
+      if (readingStartBook <= value) {
+        setReadingEndBook(value)
+      } else {
+        setReadingStartBook(value)
+        setReadingEndBook(readingStartBook)
+      }
+    } else {
+      setReadingStartBook(value)
+    }
+  }
+
+  const handleResetReadingRange = (): void => {
+    setReadingStartBook(null)
+    setReadingEndBook(null)
+    setReadingRange(null)
+  }
 
   const handleProgress = (state: OnProgressProps): void => {
     if (bibleSoundTimeStamp.length > 0) {
@@ -131,6 +156,35 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
     })()
   }, [bibleName, book, chapter, voiceType])
 
+  useEffect(() => {
+    if (readingStartBook === null || readingEndBook === null) return
+
+    const endChapter =
+      bibleCountInfo
+        .filter((el) => el.book === readingEndBook)
+        .map((el) => el.chapter)
+        .sort((a, b) => b - a)[0] || 0
+
+    setReadingRange({
+      startBook: Number(readingStartBook),
+      startChapter: 1,
+      endBook: Number(readingEndBook),
+      endChapter: Number(endChapter)
+    })
+  }, [readingStartBook, readingEndBook])
+
+  useEffect(() => {
+    if (readingRange === null) {
+      setReadingStartBook(null)
+      setReadingEndBook(null)
+      return
+    }
+
+    if (book !== readingRange.startBook || chapter !== readingRange.startChapter) {
+      searchBible(readingRange.startBook, readingRange.startChapter, 1)
+    }
+  }, [readingRange])
+
   return (
     <>
       <div className="flex">
@@ -167,7 +221,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                 value={bibleName}
                 setValue={(value) => changeBible(value)}
               >
-                <div className="flex justify-center items-center text-[18px] font-bold text-brand-blue-500">
+                <div className="flex justify-start items-center text-[18px] font-bold text-brand-blue-500">
                   <span>{bibleName}</span>
                 </div>
               </CustomSelect>
@@ -191,42 +245,87 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                         height: 'calc(var(--radix-popover-content-available-height) - 16px)'
                       }}
                     >
-                      <div className="flex w-240pxr">
-                        <div className="flex flex-col flex-1 h-full">
-                          <p className="shrink-0 flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
-                            구약
-                          </p>
-                          <ul className="overflow-y-auto scroll-hidden">
-                            {bookInfo.slice(0, 39).map((el) => (
-                              <li
-                                key={el.id}
-                                onClick={() => searchBible(el.id, 1, 1)}
-                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:bg-[#F8FAFC] hover:font-bold"
-                              >
-                                <span>{el.name}</span>
-                                {el.id === book && <IconCheck size={14} />}
-                              </li>
-                            ))}
-                          </ul>
+                      <Popover.Content
+                        sideOffset={5}
+                        className="flex max-h-384pxr overflow-hidden bg-white rounded-md shadow-sm"
+                        style={{
+                          height: 'calc(var(--radix-popover-content-available-height) - 16px)'
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px] font-bold">
+                            {readingStartBook === null && readingEndBook === null ? (
+                              <span>낭독 범위 지정하기</span>
+                            ) : (
+                              <>
+                                <span className="text-brand-blue-500">
+                                  {bookInfo.find((el) => el.id === readingStartBook)?.name || '?'}
+                                </span>
+                                <span>~</span>
+                                <span className="text-brand-blue-500">
+                                  {bookInfo.find((el) => el.id === readingEndBook)?.name || '?'}
+                                </span>
+                                <span>낭독</span>
+                                <Button
+                                  type="button"
+                                  onClick={handleResetReadingRange}
+                                  variant="ghost"
+                                  sx={tw`h-16pxr ml-auto text-red-500`}
+                                >
+                                  지정 해지
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                          <div className="flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
+                            <p className="flex-1">구약</p>
+                            <p className="flex-1">신약</p>
+                          </div>
+                          <div className="flex h-full w-220pxr">
+                            <ul className="flex-1 overflow-y-auto scroll-hidden">
+                              {bookInfo.slice(0, 39).map((el) => (
+                                <li
+                                  key={el.id}
+                                  onClick={() => handleReadingRange(el.id)}
+                                  className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
+                                  css={[
+                                    (readingStartBook &&
+                                      readingEndBook &&
+                                      readingStartBook <= el.id &&
+                                      el.id <= readingEndBook) ||
+                                    readingStartBook === el.id
+                                      ? tw`bg-brand-blue-50 font-bold`
+                                      : tw`hover:bg-[#F8FAFC]`
+                                  ]}
+                                >
+                                  <span>{el.name}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            <ul className="flex-1 overflow-y-auto scroll-hidden">
+                              {bookInfo.slice(39).map((el) => (
+                                <li
+                                  key={el.id}
+                                  onClick={() => handleReadingRange(el.id)}
+                                  className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
+                                  css={[
+                                    (readingStartBook &&
+                                      readingEndBook &&
+                                      readingStartBook <= el.id &&
+                                      el.id <= readingEndBook) ||
+                                    readingStartBook === el.id
+                                      ? tw`bg-brand-blue-50 font-bold`
+                                      : tw`hover:bg-[#F8FAFC]`
+                                  ]}
+                                >
+                                  <span>{el.name}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         </div>
-                        <div className="flex flex-col flex-1 h-full">
-                          <p className="shrink-0 flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
-                            신약
-                          </p>
-                          <ul className="overflow-y-auto scroll-hidden">
-                            {bookInfo.slice(39).map((el) => (
-                              <li
-                                key={el.id}
-                                onClick={() => searchBible(el.id, 1, 1)}
-                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:bg-[#F8FAFC] hover:font-bold"
-                              >
-                                <span>{el.name}</span>
-                                {el.id === book && <IconCheck size={14} />}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
+                        <Popover.Arrow className="fill-gray-300" />
+                      </Popover.Content>
                       <Popover.Arrow className="fill-gray-300" />
                     </Popover.Content>
                   </Popover.Portal>
@@ -279,7 +378,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
               decorative
               orientation="vertical"
             />
-            <div className="flex items-center shrink-0 w-300pxr h-40pxr">
+            <div className="flex items-center shrink-0 w-280pxr h-40pxr">
               <BibleAudioPlayer url={bibleSoundFileLocation} onProgress={handleProgress} />
             </div>
             <Separator.Root
