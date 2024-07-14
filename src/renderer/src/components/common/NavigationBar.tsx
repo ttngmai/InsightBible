@@ -281,7 +281,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                             <p className="flex-1">구약</p>
                             <p className="flex-1">신약</p>
                           </div>
-                          <div className="flex h-full w-220pxr">
+                          <div className="flex h-[calc(100%-64px)] w-220pxr">
                             <ul className="flex-1 overflow-y-auto scroll-hidden">
                               {bookInfo.slice(0, 39).map((el) => (
                                 <li
