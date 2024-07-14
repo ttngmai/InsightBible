@@ -10,14 +10,26 @@ export type ModalProps = {
 
 function Modal({ title, onClose, sx, children }: ModalProps): JSX.Element {
   // 모달 닫기 버튼 클릭 시
-  const handleClose = (e): void => {
+  const handleClose = (e: React.MouseEvent): void => {
     e.preventDefault()
     onClose()
   }
 
+  // 모달 바깥 클릭 시
+  const handleOutsideClick = (e: React.MouseEvent): void => {
+    e.stopPropagation()
+    onClose()
+  }
+
+  // 모달 안쪽 클릭 시 이벤트 전파 중지
+  const handleInsideClick = (e: React.MouseEvent): void => {
+    e.stopPropagation()
+  }
+
   return (
-    <div className="fixed inset-0 block bg-black/[0.25]">
+    <div className="fixed inset-0 block bg-black/[0.25]" onClick={handleOutsideClick}>
       <div
+        onClick={handleInsideClick}
         css={[
           tw`fixed inset-x-1/2 inset-y-1/2 -translate-x-1/2 -translate-y-1/2 w-fit h-fit max-w-[80%] overflow-hidden rounded-lg`,
           css`

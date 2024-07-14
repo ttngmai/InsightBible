@@ -220,12 +220,12 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
         <div className="flex justify-between items-center">
           <div className="flex">
             <Button type="button" onClick={handlePlayOrPause} variant="ghost" size="icon">
-              {playing ? <IconPlayerPause size={18} /> : <IconPlayerPlay size={18} />}
+              {playing ? <IconPlayerPause size={24} /> : <IconPlayerPlay size={24} />}
             </Button>
             <Button type="button" onClick={handleMuted} variant="ghost" size="icon">
-              {muted ? <IconVolumeOff size={18} /> : <IconVolume size={18} />}
+              {muted ? <IconVolumeOff size={24} /> : <IconVolume size={24} />}
             </Button>
-            <div className="relative w-50pxr ml-2pxr">
+            <div className="relative w-60pxr ml-2pxr">
               <Slider.Root
                 max={1}
                 step={0.1}
@@ -233,14 +233,14 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                 onValueChange={handleVolumeChange}
                 className="flex items-center grow h-full select-none touch-none"
               >
-                <Slider.Track className="relative grow h-3pxr bg-gray-300 rounded-full">
+                <Slider.Track className="relative grow h-4pxr bg-gray-300 rounded-full">
                   <Slider.Range className="absolute h-full bg-brand-blue-500 rounded-full" />
                 </Slider.Track>
-                <Slider.Thumb className="block w-8pxr h-8pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
+                <Slider.Thumb className="block w-10pxr h-10pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
               </Slider.Root>
             </div>
           </div>
-          <span>
+          <span className="text-[18px]">
             {formatTime(currentTime / playbackRate)} / {formatTime(duration / playbackRate)}
           </span>
           <div>
@@ -250,28 +250,28 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                   type="button"
                   className="inline-flex justify-center items-center h-32pxr w-32pxr rounded-md cursor-pointer hover:bg-[#F4F4F5]"
                 >
-                  <IconArrowAutofitWidth size={18} />
+                  <IconArrowAutofitWidth size={24} />
                 </button>
               </Popover.Trigger>
               <Popover.Portal>
                 <Popover.Content
                   sideOffset={5}
-                  className="flex max-h-352pxr overflow-hidden bg-white rounded-md shadow-sm"
+                  className="flex max-h-384pxr overflow-hidden bg-white rounded-md shadow-sm"
                   style={{
                     height: 'calc(var(--radix-popover-content-available-height) - 16px)'
                   }}
                 >
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-4pxr h-40pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px]">
+                    <div className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px] font-bold">
                       {startBook === null && endBook === null ? (
-                        <span>낭독 범위 지정</span>
+                        <span>낭독 범위 지정하기</span>
                       ) : (
                         <>
-                          <span className="font-bold">
+                          <span className="text-brand-blue-500">
                             {bookInfo.find((el) => el.id === startBook)?.name || '?'}
                           </span>
                           <span>~</span>
-                          <span className="font-bold">
+                          <span className="text-brand-blue-500">
                             {bookInfo.find((el) => el.id === endBook)?.name || '?'}
                           </span>
                           <span>낭독</span>
@@ -281,12 +281,16 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                             variant="ghost"
                             sx={tw`h-16pxr ml-auto text-red-500`}
                           >
-                            해제
+                            지정 해지
                           </Button>
                         </>
                       )}
                     </div>
-                    <div className="flex h-[calc(100%-32px)] w-240pxr">
+                    <div className="flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
+                      <p className="flex-1">구약</p>
+                      <p className="flex-1">신약</p>
+                    </div>
+                    <div className="flex h-full w-220pxr">
                       <ul className="flex-1 overflow-y-auto scroll-hidden">
                         {bookInfo.slice(0, 39).map((el) => (
                           <li
@@ -296,7 +300,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                             css={[
                               (startBook && endBook && startBook <= el.id && el.id <= endBook) ||
                               startBook === el.id
-                                ? tw`bg-brand-blue-50`
+                                ? tw`bg-brand-blue-50 font-bold`
                                 : tw`hover:bg-[#F8FAFC]`
                             ]}
                           >
@@ -313,7 +317,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                             css={[
                               (startBook && endBook && startBook <= el.id && el.id <= endBook) ||
                               startBook === el.id
-                                ? tw`bg-brand-blue-50`
+                                ? tw`bg-brand-blue-50 font-bold`
                                 : tw`hover:bg-[#F8FAFC]`
                             ]}
                           >
@@ -333,7 +337,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                   type="button"
                   className="inline-flex justify-center items-center h-32pxr w-32pxr rounded-md cursor-pointer hover:bg-[#F4F4F5]"
                 >
-                  <IconAdjustmentsHorizontal size={18} />
+                  <IconAdjustmentsHorizontal size={24} />
                 </button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
@@ -383,7 +387,9 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                             onClick={() => setVoiceType(voice)}
                             css={[
                               tw`px-8pxr py-2pxr cursor-pointer select-none outline-none`,
-                              voice === voiceType ? tw`bg-brand-blue-50` : tw`hover:bg-gray-100`
+                              voice === voiceType
+                                ? tw`bg-brand-blue-50 font-bold`
+                                : tw`hover:bg-gray-100`
                             ]}
                           >
                             {voice}

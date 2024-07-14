@@ -156,7 +156,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
           ]}
         >
           <div className="flex items-center w-full h-full px-16pxr py-8pxr">
-            <div className="flex justify-center items-center shrink-0 w-100pxr">
+            <div className="flex justify-center items-center shrink-0 w-fit">
               <CustomSelect
                 placeholder="성경 선택"
                 itemList={[
@@ -167,21 +167,21 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                 value={bibleName}
                 setValue={(value) => changeBible(value)}
               >
-                <div className="flex justify-center items-center mx-16pxr text-[18px] font-bold">
+                <div className="flex justify-center items-center text-[18px] font-bold text-brand-blue-500">
                   <span>{bibleName}</span>
                 </div>
               </CustomSelect>
             </div>
             <Separator.Root
-              className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-8pxr bg-gray-300"
+              className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-12pxr bg-gray-300"
               decorative
               orientation="vertical"
             />
-            <div className="flex items-center shrink-0 w-300pxr">
-              <div className="flex items-center gap-16pxr mx-auto">
+            <div className="flex items-center shrink-0 w-fit">
+              <div className="flex items-center gap-8pxr mx-auto">
                 <Popover.Root>
                   <Popover.Trigger>
-                    <span className="text-[18px] font-bold">{bookName}</span>
+                    <span className="text-[18px] font-bold text-brand-blue-500">{bookName}</span>
                   </Popover.Trigger>
                   <Popover.Portal>
                     <Popover.Content
@@ -251,8 +251,8 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                     value={String(chapter)}
                     setValue={(value) => searchBible(book, Number(value), 1)}
                   >
-                    <div className="flex justify-center items-center mx-16pxr text-[18px] font-bold">
-                      <span>
+                    <div className="flex justify-center items-center mx-8pxr text-[18px] font-bold">
+                      <span className="text-brand-blue-500">
                         {chapter}
                         {book !== 19 ? '장' : '편'}
                       </span>
@@ -275,7 +275,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
               </div>
             </div>
             <Separator.Root
-              className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-8pxr bg-gray-300"
+              className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-12pxr bg-gray-300"
               decorative
               orientation="vertical"
             />
@@ -283,7 +283,7 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
               <BibleAudioPlayer url={bibleSoundFileLocation} onProgress={handleProgress} />
             </div>
             <Separator.Root
-              className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-8pxr bg-gray-300"
+              className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-12pxr bg-gray-300"
               decorative
               orientation="vertical"
             />

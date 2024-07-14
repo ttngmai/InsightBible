@@ -132,47 +132,41 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
 
       {openBibleBackgroundColorPickerModal && (
         <ModalPortal>
-          <div>
-            <ColorPickerModal
-              title="배경색 선택"
-              defaultColor={bibleBackgroundColor}
-              onColorSelect={(color: string) => {
-                setBibleBackgroundColor(color)
-                setOpenBibleBackgroundColorPickerModal(false)
-              }}
-              onClose={() => setOpenBibleBackgroundColorPickerModal(false)}
-            />
-          </div>
+          <ColorPickerModal
+            title="배경색 선택"
+            defaultColor={bibleBackgroundColor}
+            onColorSelect={(color: string) => {
+              setBibleBackgroundColor(color)
+              setOpenBibleBackgroundColorPickerModal(false)
+            }}
+            onClose={() => setOpenBibleBackgroundColorPickerModal(false)}
+          />
         </ModalPortal>
       )}
       {openBibleTextColorPickerModal && (
         <ModalPortal>
-          <div>
-            <ColorPickerModal
-              title="글자색 선택"
-              defaultColor={bibleTextColor}
-              onColorSelect={(color: string) => {
-                setBibleTextColor(color)
-                setOpenBibleTextColorPickerModal(false)
-              }}
-              onClose={() => setOpenBibleTextColorPickerModal(false)}
-            />
-          </div>
+          <ColorPickerModal
+            title="글자색 선택"
+            defaultColor={bibleTextColor}
+            onColorSelect={(color: string) => {
+              setBibleTextColor(color)
+              setOpenBibleTextColorPickerModal(false)
+            }}
+            onClose={() => setOpenBibleTextColorPickerModal(false)}
+          />
         </ModalPortal>
       )}
       {openCurrentReadingTextColorPickerModal && (
         <ModalPortal>
-          <div>
-            <ColorPickerModal
-              title="강조색 선택"
-              defaultColor={currentReadingTextColor || bibleTextColor}
-              onColorSelect={(color: string) => {
-                setCurrentReadingTextColor(color)
-                setOpenCurrentReadingTextColorPickerModal(false)
-              }}
-              onClose={() => setOpenCurrentReadingTextColorPickerModal(false)}
-            />
-          </div>
+          <ColorPickerModal
+            title="강조색 선택"
+            defaultColor={currentReadingTextColor || bibleTextColor}
+            onColorSelect={(color: string) => {
+              setCurrentReadingTextColor(color)
+              setOpenCurrentReadingTextColorPickerModal(false)
+            }}
+            onClose={() => setOpenCurrentReadingTextColorPickerModal(false)}
+          />
         </ModalPortal>
       )}
     </>
