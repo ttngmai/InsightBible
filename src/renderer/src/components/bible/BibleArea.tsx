@@ -7,7 +7,10 @@ import {
   readWriteCurrentReadingPositionAtom,
   readWriteCurrentReadingTextColorAtom,
   readWriteBibleTextSizeAtom,
-  readWriteVerseAtom
+  readWriteVerseAtom,
+  readWriteEnableAutoScrollingAtom,
+  readWriteAutoScrollingSpeedAtom,
+  readWritePlayingBibleAudio
 } from '@renderer/store'
 import isLight from '@renderer/utils/contrastColor'
 import { bibleCountInfo, bookInfo } from '@shared/constants'
@@ -64,7 +67,10 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   const chapter = useAtomValue(readWriteChapterAtom)
   const [verse, setVerse] = useAtom(readWriteVerseAtom)
   const bibleData = useAtomValue(readWriteBibleDataAtom)
+  const playing = useAtomValue(readWritePlayingBibleAudio)
   const currentReadingPosition = useAtomValue(readWriteCurrentReadingPositionAtom)
+  const enableAutoScrolling = useAtomValue(readWriteEnableAutoScrollingAtom)
+  const autoScrollingSpeed = useAtomValue(readWriteAutoScrollingSpeedAtom)
 
   const [lastVerse, setLastVerse] = useState<number>(0)
   const [visibleVerseList, setVisibleVerseList] = useState<number[]>([]) // 화면에 보이는 절 숫자 리스트
@@ -143,6 +149,21 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   // 옵저버
   const observer = new IntersectionObserver(handleObserver, { threshold: 0.5 })
 
+  // 자동 스크롤 사용 시
+  useEffect(() => {
+    if (!playing || !enableAutoScrolling) return
+
+    let scrollInterval
+
+    if (currentReadingPosition && verse < currentReadingPosition && wrapperRef.current) {
+      scrollInterval = setInterval(() => {
+        wrapperRef.current?.scrollBy(0, 1)
+      }, 1000 / autoScrollingSpeed)
+    }
+
+    return () => clearInterval(scrollInterval)
+  }, [playing, enableAutoScrolling, autoScrollingSpeed, currentReadingPosition, verse])
+
   useEffect(() => {
     setLastVerse(
       bibleCountInfo.filter((el) => el.book === book).filter((el) => el.chapter === chapter)[0]
@@ -178,6 +199,8 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   }, [bibleData])
 
   useEffect(() => {
+    if (enableAutoScrolling) return
+
     if (currentReadingPosition !== null && bibleData.length > 0) {
       if (currentReadingPosition === 0 && titleRef.current) {
         titleRef.current.scrollIntoView({ block: 'center' })
@@ -192,7 +215,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
         currentVerseRef.scrollIntoView({ block: 'center' })
       }
     }
-  }, [currentReadingPosition])
+  }, [enableAutoScrolling, currentReadingPosition])
 
   // 최상단에 보이는 절을 기준으로 verse State 업데이트
   useEffect(() => {

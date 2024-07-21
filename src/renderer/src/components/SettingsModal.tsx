@@ -4,15 +4,25 @@ import {
   readWriteBibleBackgroundColorAtom,
   readWriteBibleTextColorAtom,
   readWriteCurrentReadingTextColorAtom,
-  readWriteBibleTextSizeAtom
+  readWriteBibleTextSizeAtom,
+  readWriteEnableAutoScrollingAtom,
+  readWriteAutoScrollingSpeedAtom
 } from '@renderer/store'
-import { IconHighlight, IconPaint, IconPalette, IconTextSize } from '@tabler/icons-react'
+import {
+  IconArrowAutofitDown,
+  IconChevronsDown,
+  IconHighlight,
+  IconPaint,
+  IconPalette,
+  IconTextSize
+} from '@tabler/icons-react'
 import { useState } from 'react'
 import Button from './common/Button'
 import ColorPickerModal from './ColorPickerModal'
 import ModalPortal from '@renderer/utils/ModalPortal'
 import tw, { css } from 'twin.macro'
 import CustomSelect from './common/CustomSelect'
+import * as Switch from '@radix-ui/react-switch'
 
 type SettingsModalProps = {
   onClose: () => void
@@ -24,7 +34,7 @@ const contentTableStyle = css`
     ${tw`py-8pxr`}
   }
   td {
-    ${tw`text-center`}
+    ${tw`flex justify-center items-center`}
   }
 `
 
@@ -35,6 +45,8 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [currentReadingTextColor, setCurrentReadingTextColor] = useAtom(
     readWriteCurrentReadingTextColorAtom
   )
+  const [enableAutoScrolling, setEnableAutoScrolling] = useAtom(readWriteEnableAutoScrollingAtom)
+  const [autoScrollingSpeed, setAutoScrollingSpeed] = useAtom(readWriteAutoScrollingSpeedAtom)
 
   const [openBibleBackgroundColorPickerModal, setOpenBibleBackgroundColorPickerModal] =
     useState<boolean>(false)
@@ -42,10 +54,14 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [openCurrentReadingTextColorPickerModal, setOpenCurrentReadingTextColorPickerModal] =
     useState<boolean>(false)
 
+  const handleAutoScrollingSpeed = (speed: number): void => {
+    setAutoScrollingSpeed(speed)
+  }
+
   return (
     <>
       <Modal title="설정" onClose={onClose}>
-        <div className="flex flex-col justify-center items-center w-360pxr h-240pxr p-16pxr bg-white">
+        <div className="flex flex-col justify-center items-center w-300pxr min-h-240pxr p-16pxr bg-white">
           <table css={[contentTableStyle, tw`w-200pxr`]}>
             <tr>
               <th>
@@ -126,6 +142,51 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                 </Button>
               </td>
             </tr>
+            <tr>
+              <th>
+                <div className="flex items-center gap-8pxr">
+                  <IconArrowAutofitDown size={18} />
+                  <span>자동 스크롤</span>
+                </div>
+              </th>
+              <td>
+                <Switch.Root
+                  checked={enableAutoScrolling}
+                  onCheckedChange={() => setEnableAutoScrolling(!enableAutoScrolling)}
+                  className="relative w-[42px] h-[25px] bg-gray-400 rounded-full shadow outline-none data-[state=checked]:bg-brand-blue-500"
+                >
+                  <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
+                </Switch.Root>
+              </td>
+            </tr>
+            {enableAutoScrolling && (
+              <>
+                <tr>
+                  <th>
+                    <div className="flex items-center gap-8pxr">
+                      <IconChevronsDown size={18} />
+                      <span className="font-bold">스크롤 속도</span>
+                    </div>
+                  </th>
+                  <td>
+                    <span>{autoScrollingSpeed.toFixed(1)}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th colSpan={2} className="!pt-0">
+                    <input
+                      type="range"
+                      min="1.0"
+                      max="50.0"
+                      step="0.1"
+                      value={autoScrollingSpeed}
+                      onChange={(event) => handleAutoScrollingSpeed(Number(event.target.value))}
+                      className="w-full"
+                    />
+                  </th>
+                </tr>
+              </>
+            )}
           </table>
         </div>
       </Modal>

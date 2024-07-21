@@ -240,92 +240,83 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
                   <Popover.Portal>
                     <Popover.Content
                       sideOffset={5}
-                      className="flex max-h-352pxr overflow-hidden bg-white rounded-md shadow-sm"
+                      className="flex max-h-384pxr overflow-hidden bg-white rounded-md shadow-sm"
                       style={{
                         height: 'calc(var(--radix-popover-content-available-height) - 16px)'
                       }}
                     >
-                      <Popover.Content
-                        sideOffset={5}
-                        className="flex max-h-384pxr overflow-hidden bg-white rounded-md shadow-sm"
-                        style={{
-                          height: 'calc(var(--radix-popover-content-available-height) - 16px)'
-                        }}
-                      >
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px] font-bold">
-                            {readingStartBook === null && readingEndBook === null ? (
-                              <span>낭독 범위 지정하기</span>
-                            ) : (
-                              <>
-                                <span className="text-brand-blue-500">
-                                  {bookInfo.find((el) => el.id === readingStartBook)?.name || '?'}
-                                </span>
-                                <span>~</span>
-                                <span className="text-brand-blue-500">
-                                  {bookInfo.find((el) => el.id === readingEndBook)?.name || '?'}
-                                </span>
-                                <span>낭독</span>
-                                <Button
-                                  type="button"
-                                  onClick={handleResetReadingRange}
-                                  variant="ghost"
-                                  sx={tw`h-16pxr ml-auto text-red-500`}
-                                >
-                                  지정 해지
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                          <div className="flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
-                            <p className="flex-1">구약</p>
-                            <p className="flex-1">신약</p>
-                          </div>
-                          <div className="flex h-[calc(100%-64px)] w-220pxr">
-                            <ul className="flex-1 overflow-y-auto scroll-hidden">
-                              {bookInfo.slice(0, 39).map((el) => (
-                                <li
-                                  key={el.id}
-                                  onClick={() => handleReadingRange(el.id)}
-                                  className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
-                                  css={[
-                                    (readingStartBook &&
-                                      readingEndBook &&
-                                      readingStartBook <= el.id &&
-                                      el.id <= readingEndBook) ||
-                                    readingStartBook === el.id
-                                      ? tw`bg-brand-blue-50 font-bold`
-                                      : tw`hover:bg-[#F8FAFC]`
-                                  ]}
-                                >
-                                  <span>{el.name}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            <ul className="flex-1 overflow-y-auto scroll-hidden">
-                              {bookInfo.slice(39).map((el) => (
-                                <li
-                                  key={el.id}
-                                  onClick={() => handleReadingRange(el.id)}
-                                  className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
-                                  css={[
-                                    (readingStartBook &&
-                                      readingEndBook &&
-                                      readingStartBook <= el.id &&
-                                      el.id <= readingEndBook) ||
-                                    readingStartBook === el.id
-                                      ? tw`bg-brand-blue-50 font-bold`
-                                      : tw`hover:bg-[#F8FAFC]`
-                                  ]}
-                                >
-                                  <span>{el.name}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                      <div className="flex flex-col w-300pxr">
+                        <div className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 text-[14px] font-bold">
+                          {readingStartBook === null && readingEndBook === null ? (
+                            <span>낭독 범위 지정하기</span>
+                          ) : (
+                            <>
+                              <span className="text-brand-blue-500">
+                                {bookInfo.find((el) => el.id === readingStartBook)?.name || '?'}
+                              </span>
+                              <span>~</span>
+                              <span className="text-brand-blue-500">
+                                {bookInfo.find((el) => el.id === readingEndBook)?.name || '?'}
+                              </span>
+                              <span>낭독</span>
+                              <Button
+                                type="button"
+                                onClick={handleResetReadingRange}
+                                variant="ghost"
+                                sx={tw`h-16pxr ml-auto text-red-500`}
+                              >
+                                지정 해지
+                              </Button>
+                            </>
+                          )}
                         </div>
-                        <Popover.Arrow className="fill-gray-300" />
-                      </Popover.Content>
+                        <div className="flex items-center h-32pxr px-8pxr py-4pxr border-b border-b-gray-300 font-bold text-[14px]">
+                          <p className="flex-1">구약</p>
+                          <p className="flex-1">신약</p>
+                        </div>
+                        <div className="flex h-[calc(100%-64px)]">
+                          <ul className="flex-1 overflow-y-auto scroll-hidden">
+                            {bookInfo.slice(0, 39).map((el) => (
+                              <li
+                                key={el.id}
+                                onClick={() => handleReadingRange(el.id)}
+                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
+                                css={[
+                                  (readingStartBook &&
+                                    readingEndBook &&
+                                    readingStartBook <= el.id &&
+                                    el.id <= readingEndBook) ||
+                                  readingStartBook === el.id
+                                    ? tw`bg-brand-blue-50 font-bold`
+                                    : tw`hover:bg-[#F8FAFC]`
+                                ]}
+                              >
+                                <span>{el.name}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <ul className="flex-1 overflow-y-auto scroll-hidden">
+                            {bookInfo.slice(39).map((el) => (
+                              <li
+                                key={el.id}
+                                onClick={() => handleReadingRange(el.id)}
+                                className="flex items-center gap-4pxr h-32pxr px-8pxr py-4pxr text-[14px] select-none cursor-pointer hover:font-bold"
+                                css={[
+                                  (readingStartBook &&
+                                    readingEndBook &&
+                                    readingStartBook <= el.id &&
+                                    el.id <= readingEndBook) ||
+                                  readingStartBook === el.id
+                                    ? tw`bg-brand-blue-50 font-bold`
+                                    : tw`hover:bg-[#F8FAFC]`
+                                ]}
+                              >
+                                <span>{el.name}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                       <Popover.Arrow className="fill-gray-300" />
                     </Popover.Content>
                   </Popover.Portal>

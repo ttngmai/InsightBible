@@ -18,6 +18,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import {
   readWriteBookAtom,
   readWriteChapterAtom,
+  readWritePlayingBibleAudio,
   readWriteReadingRangeAtom,
   readWriteVoiceTypeAtom
 } from '@renderer/store'
@@ -35,9 +36,9 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   const book = useAtomValue(readWriteBookAtom)
   const chapter = useAtomValue(readWriteChapterAtom)
   const [voiceType, setVoiceType] = useAtom(readWriteVoiceTypeAtom)
+  const [playing, setPlaying] = useAtom(readWritePlayingBibleAudio)
   const [readingRange, setReadingRange] = useAtom(readWriteReadingRangeAtom)
 
-  const [playing, setPlaying] = useState<boolean>(false)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [duration, setDuration] = useState<number>(0)
   const [seeking, setSeeking] = useState<boolean>(false)
@@ -78,7 +79,10 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   }
 
   const handleEnded = (): void => {
-    if (readingRange === null) return
+    if (readingRange === null) {
+      setPlaying(false)
+      return
+    }
 
     if (book === readingRange.endBook) {
       if (chapter < readingRange.endChapter) {

@@ -6,6 +6,7 @@ type TItem = { key: string; value: string; text: string }
 
 type CustomSelectProps = ComponentProps<'select'> & {
   placeholder?: string
+  showItemIndicator?: boolean
   itemList: TItem[]
   value: string
   disabled?: boolean
@@ -15,11 +16,13 @@ type CustomSelectProps = ComponentProps<'select'> & {
 type SelectItemProps = {
   value: string
   disabled?: boolean
+  showIndicator?: boolean
   children?: ReactNode
 }
 
 function CustomSelect({
   placeholder,
+  showItemIndicator,
   itemList,
   value,
   disabled,
@@ -45,7 +48,7 @@ function CustomSelect({
           <Select.Viewport className="p-4pxr">
             <Select.Group>
               {itemList.map((el) => (
-                <SelectItem key={el.key} value={el.value}>
+                <SelectItem key={el.key} value={el.value} showIndicator={showItemIndicator}>
                   {el.text}
                 </SelectItem>
               ))}
@@ -58,7 +61,7 @@ function CustomSelect({
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
-  ({ children, value, disabled }, ref) => {
+  ({ children, value, disabled, showIndicator }, ref) => {
     return (
       <Select.Item
         ref={ref}
@@ -67,9 +70,11 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
         disabled={disabled}
       >
         <Select.ItemText>{children}</Select.ItemText>
-        <Select.ItemIndicator className="inline-flex items-center justify-center">
-          <IconCheck size={14} />
-        </Select.ItemIndicator>
+        {showIndicator && (
+          <Select.ItemIndicator className="inline-flex items-center justify-center">
+            <IconCheck size={14} />
+          </Select.ItemIndicator>
+        )}
       </Select.Item>
     )
   }
