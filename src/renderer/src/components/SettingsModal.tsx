@@ -177,7 +177,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                     <input
                       type="range"
                       min="1.0"
-                      max="50.0"
+                      max="150.0"
                       step="0.1"
                       value={autoScrollingSpeed}
                       onChange={(event) => handleAutoScrollingSpeed(Number(event.target.value))}
