@@ -2,12 +2,12 @@ import { TBible, TBibleSoundTimeStamp } from '@shared/models'
 import { TReadingRange } from '@shared/types'
 import { atom } from 'jotai'
 
-const bibleNameAtom = atom<string>(String(window.electron.store.get('bibleName') || '개역개정'))
+const bibleNameAtom = atom<string>('개역한글')
 const bookAtom = atom<number>(Number(window.electron.store.get('book') || 1))
 const chapterAtom = atom<number>(Number(window.electron.store.get('chapter') || 1))
 const verseAtom = atom<number>(Number(window.electron.store.get('verse') || 1))
 const bibleDataAtom = atom<TBible[]>([])
-const voiceTypeAtom = atom<string>(String(window.electron.store.get('voiceType') || '남성'))
+const voiceTypeAtom = atom<string>('남성')
 const bibleSoundTimeStampAtom = atom<TBibleSoundTimeStamp[]>([])
 const playingBibleAudio = atom<boolean>(false)
 const readingRangeAtom = atom<TReadingRange | null>(null)

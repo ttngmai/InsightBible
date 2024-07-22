@@ -11,7 +11,6 @@ import {
   IconVolume,
   IconVolumeOff
 } from '@tabler/icons-react'
-import tw from 'twin.macro'
 import { OnProgressProps } from 'react-player/base'
 import formatTime from '@renderer/utils/timeFormat'
 import { useAtom, useAtomValue } from 'jotai'
@@ -19,8 +18,7 @@ import {
   readWriteBookAtom,
   readWriteChapterAtom,
   readWritePlayingBibleAudio,
-  readWriteReadingRangeAtom,
-  readWriteVoiceTypeAtom
+  readWriteReadingRangeAtom
 } from '@renderer/store'
 import { bibleCountInfo } from '@shared/constants'
 import useSearchBible from '@renderer/hooks/useSearchBible'
@@ -35,7 +33,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
 
   const book = useAtomValue(readWriteBookAtom)
   const chapter = useAtomValue(readWriteChapterAtom)
-  const [voiceType, setVoiceType] = useAtom(readWriteVoiceTypeAtom)
   const [playing, setPlaying] = useAtom(readWritePlayingBibleAudio)
   const [readingRange, setReadingRange] = useAtom(readWriteReadingRangeAtom)
 
@@ -232,35 +229,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
                           />
                           <span>{playbackRate.toFixed(1)} 배속</span>
                         </div>
-                      </DropdownMenu.SubContent>
-                    </DropdownMenu.Portal>
-                  </DropdownMenu.Sub>
-                  <DropdownMenu.Sub>
-                    <DropdownMenu.SubTrigger className="flex items-center px-8pxr py-2pxr cursor-pointer select-none outline-none">
-                      음성 선택
-                      <div className="ml-auto -mr-4pxr">
-                        <IconChevronRight size={18} />
-                      </div>
-                    </DropdownMenu.SubTrigger>
-                    <DropdownMenu.Portal>
-                      <DropdownMenu.SubContent
-                        sideOffset={2}
-                        className="w-120pxr rounded border bg-white overflow-hidden"
-                      >
-                        {['남성', '여성'].map((voice) => (
-                          <DropdownMenu.Item
-                            key={voice}
-                            onClick={() => setVoiceType(voice)}
-                            css={[
-                              tw`px-8pxr py-2pxr cursor-pointer select-none outline-none`,
-                              voice === voiceType
-                                ? tw`bg-brand-blue-50 font-bold`
-                                : tw`hover:bg-gray-100`
-                            ]}
-                          >
-                            {voice}
-                          </DropdownMenu.Item>
-                        ))}
                       </DropdownMenu.SubContent>
                     </DropdownMenu.Portal>
                   </DropdownMenu.Sub>
