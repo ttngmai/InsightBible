@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, clipboard } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../../resources/icon.ico?asset'
 import { TFindBible, TFindBibleSoundTimeStamp } from '@shared/types.js'
 import { findBible } from '@/repository/BibleRepository.js'
 import Store from 'electron-store'
