@@ -25,7 +25,6 @@ import {
 import SettingsModal from '../SettingsModal'
 import useSearchBible from '@renderer/hooks/useSearchBible'
 import CustomSelect from './CustomSelect'
-import useChangeBible from '@renderer/hooks/useChangeBible'
 import BibleAudioPlayer from '../bible/BibleAudioPlayer'
 import { OnProgressProps } from 'react-player/base'
 import * as Popover from '@radix-ui/react-popover'
@@ -60,7 +59,6 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
 
   const bookName = bookInfo.find((el) => el.id === book)?.name
 
-  const changeBible = useChangeBible()
   const searchBible = useSearchBible()
 
   const handleReadingRange = (value: number): void => {
