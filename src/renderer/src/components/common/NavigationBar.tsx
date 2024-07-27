@@ -211,16 +211,9 @@ function NavigationBar({ sx }: NavigationBarProps): JSX.Element {
         >
           <div className="flex items-center w-full h-full px-16pxr py-8pxr">
             <div className="flex justify-center items-center shrink-0 w-fit">
-              <CustomSelect
-                placeholder="성경 선택"
-                itemList={[{ key: '개역한글', value: '개역한글', text: '개역한글' }]}
-                value={bibleName}
-                setValue={(value) => changeBible(value)}
-              >
-                <div className="flex justify-start items-center text-[18px] font-bold text-brand-blue-500">
-                  <span>{bibleName}</span>
-                </div>
-              </CustomSelect>
+              <div className="flex justify-start items-center text-[18px] font-bold text-brand-blue-500">
+                <span>{bibleName}</span>
+              </div>
             </div>
             <Separator.Root
               className="shrink-0 inline-block data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px mx-12pxr bg-gray-300"
