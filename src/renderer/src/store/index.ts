@@ -13,7 +13,7 @@ const playingBibleAudio = atom<boolean>(false)
 const readingRangeAtom = atom<TReadingRange | null>(null)
 const currentReadingPositionAtom = atom<number | null>(null)
 const enableAutoScrollingAtom = atom<boolean>(false)
-const autoScrollingSpeedAtom = atom<number>(5.0)
+const autoScrollingSpeedAtom = atom<number>(150.0)
 
 const bibleBackgroundColorAtom = atom<string>(
   String(window.electron.store.get('bibleBackgroundColor') || '#fff')
