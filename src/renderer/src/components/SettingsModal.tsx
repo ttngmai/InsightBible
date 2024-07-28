@@ -6,11 +6,13 @@ import {
   readWriteCurrentReadingTextColorAtom,
   readWriteBibleTextSizeAtom,
   readWriteEnableAutoScrollingAtom,
-  readWriteAutoScrollingSpeedAtom
+  readWriteAutoScrollingSpeedAtom,
+  readWritePlaybackRate
 } from '@renderer/store'
 import {
   IconArrowAutofitDown,
   IconChevronsDown,
+  IconChevronsRight,
   IconHighlight,
   IconPaint,
   IconPalette,
@@ -23,6 +25,7 @@ import ModalPortal from '@renderer/utils/ModalPortal'
 import tw, { css } from 'twin.macro'
 import CustomSelect from './common/CustomSelect'
 import * as Switch from '@radix-ui/react-switch'
+import * as Slider from '@radix-ui/react-slider'
 
 type SettingsModalProps = {
   onClose: () => void
@@ -47,6 +50,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   )
   const [enableAutoScrolling, setEnableAutoScrolling] = useAtom(readWriteEnableAutoScrollingAtom)
   const [autoScrollingSpeed, setAutoScrollingSpeed] = useAtom(readWriteAutoScrollingSpeedAtom)
+  const [playbackRate, setPlaybackRate] = useAtom(readWritePlaybackRate)
 
   const [openBibleBackgroundColorPickerModal, setOpenBibleBackgroundColorPickerModal] =
     useState<boolean>(false)
@@ -54,8 +58,12 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
   const [openCurrentReadingTextColorPickerModal, setOpenCurrentReadingTextColorPickerModal] =
     useState<boolean>(false)
 
-  const handleAutoScrollingSpeed = (speed: number): void => {
-    setAutoScrollingSpeed(speed)
+  const handleAutoScrollingSpeed = (speed: number[]): void => {
+    setAutoScrollingSpeed(speed[0])
+  }
+
+  const handlePlaybackRate = (speed: number[]): void => {
+    setPlaybackRate(speed[0])
   }
 
   return (
@@ -173,20 +181,52 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
                   </td>
                 </tr>
                 <tr>
-                  <th colSpan={2} className="!pt-0">
-                    <input
-                      type="range"
-                      min="1.0"
-                      max="150.0"
-                      step="0.1"
-                      value={autoScrollingSpeed}
-                      onChange={(event) => handleAutoScrollingSpeed(Number(event.target.value))}
-                      className="w-full"
-                    />
+                  <th colSpan={2} className="relative !pt-0">
+                    <Slider.Root
+                      min={1.0}
+                      max={150.0}
+                      step={0.1}
+                      value={[autoScrollingSpeed]}
+                      onValueChange={handleAutoScrollingSpeed}
+                      className="flex items-center grow h-full select-none touch-none"
+                    >
+                      <Slider.Track className="relative grow h-6pxr bg-gray-300 rounded-full">
+                        <Slider.Range className="absolute h-full bg-brand-blue-500 rounded-full" />
+                      </Slider.Track>
+                      <Slider.Thumb className="block w-10pxr h-10pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
+                    </Slider.Root>
                   </th>
                 </tr>
               </>
             )}
+            <tr>
+              <th>
+                <div className="flex items-center gap-8pxr">
+                  <IconChevronsRight size={18} />
+                  <span className="font-bold">재생 속도</span>
+                </div>
+              </th>
+              <td>
+                <span>{playbackRate.toFixed(1)}</span>
+              </td>
+            </tr>
+            <tr>
+              <th colSpan={2} className="relative !pt-0">
+                <Slider.Root
+                  min={1.0}
+                  max={5.0}
+                  step={0.1}
+                  value={[playbackRate]}
+                  onValueChange={handlePlaybackRate}
+                  className="flex items-center grow h-full select-none touch-none"
+                >
+                  <Slider.Track className="relative grow h-6pxr bg-gray-300 rounded-full">
+                    <Slider.Range className="absolute h-full bg-brand-blue-500 rounded-full" />
+                  </Slider.Track>
+                  <Slider.Thumb className="block w-10pxr h-10pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
+                </Slider.Root>
+              </th>
+            </tr>
           </table>
         </div>
       </Modal>

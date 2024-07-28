@@ -10,7 +10,7 @@ import {
   readWriteVerseAtom,
   readWriteEnableAutoScrollingAtom,
   readWriteAutoScrollingSpeedAtom,
-  readWritePlayingBibleAudio
+  readWritePlayingAudio
 } from '@renderer/store'
 import isLight from '@renderer/utils/contrastColor'
 import { bibleCountInfo, bookInfo } from '@shared/constants'
@@ -67,7 +67,7 @@ function BibleArea({ sx }: BibleAreaProps): JSX.Element | null {
   const chapter = useAtomValue(readWriteChapterAtom)
   const [verse, setVerse] = useAtom(readWriteVerseAtom)
   const bibleData = useAtomValue(readWriteBibleDataAtom)
-  const playing = useAtomValue(readWritePlayingBibleAudio)
+  const playing = useAtomValue(readWritePlayingAudio)
   const currentReadingPosition = useAtomValue(readWriteCurrentReadingPositionAtom)
   const enableAutoScrolling = useAtomValue(readWriteEnableAutoScrollingAtom)
   const autoScrollingSpeed = useAtomValue(readWriteAutoScrollingSpeedAtom)

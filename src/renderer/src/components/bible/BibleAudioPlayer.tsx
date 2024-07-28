@@ -1,23 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import * as Slider from '@radix-ui/react-slider'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Button from '../common/Button'
-import {
-  IconAdjustmentsHorizontal,
-  IconChevronRight,
-  IconPlayerPause,
-  IconPlayerPlay,
-  IconVolume,
-  IconVolumeOff
-} from '@tabler/icons-react'
+import { IconPlayerPause, IconPlayerPlay, IconVolume, IconVolumeOff } from '@tabler/icons-react'
 import { OnProgressProps } from 'react-player/base'
 import formatTime from '@renderer/utils/timeFormat'
 import { useAtom, useAtomValue } from 'jotai'
 import {
   readWriteBookAtom,
   readWriteChapterAtom,
-  readWritePlayingBibleAudio,
+  readWritePlaybackRate,
+  readWritePlayingAudio,
   readWriteReadingRangeAtom
 } from '@renderer/store'
 import { bibleCountInfo } from '@shared/constants'
@@ -33,7 +26,8 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
 
   const book = useAtomValue(readWriteBookAtom)
   const chapter = useAtomValue(readWriteChapterAtom)
-  const [playing, setPlaying] = useAtom(readWritePlayingBibleAudio)
+  const [playing, setPlaying] = useAtom(readWritePlayingAudio)
+  const playbackRate = useAtomValue(readWritePlaybackRate)
   const [readingRange, setReadingRange] = useAtom(readWriteReadingRangeAtom)
 
   const [currentTime, setCurrentTime] = useState<number>(0)
@@ -41,7 +35,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
   const [seeking, setSeeking] = useState<boolean>(false)
   const [muted, setMuted] = useState<boolean>(false)
   const [volume, setVolume] = useState<number>(0.5)
-  const [playbackRate, setPlaybackRate] = useState<number>(1.0)
   const [progressInterval, setProgressInterval] = useState<number>(300)
   const [lastChapter, setLastChapter] = useState<number>(0)
 
@@ -64,10 +57,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
 
   const handleMuted = (): void => {
     setMuted(!muted)
-  }
-
-  const handlePlaybackRate = (rate: number): void => {
-    setPlaybackRate(rate)
   }
 
   const handleVolumeChange = (volume: number[]): void => {
@@ -175,7 +164,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
             <Button type="button" onClick={handleMuted} variant="ghost" size="icon">
               {muted ? <IconVolumeOff size={24} /> : <IconVolume size={24} />}
             </Button>
-            <div className="relative w-60pxr ml-2pxr">
+            <div className="relative w-80pxr ml-2pxr">
               <Slider.Root
                 max={1}
                 step={0.1}
@@ -193,50 +182,6 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
           <span className="text-[18px]">
             {formatTime(currentTime / playbackRate)} / {formatTime(duration / playbackRate)}
           </span>
-          <div>
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex justify-center items-center h-32pxr w-32pxr rounded-md cursor-pointer hover:bg-[#F4F4F5]"
-                >
-                  <IconAdjustmentsHorizontal size={24} />
-                </button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Portal>
-                <DropdownMenu.Content className="w-120pxr rounded border bg-white" align="end">
-                  <DropdownMenu.Sub>
-                    <DropdownMenu.SubTrigger className="flex items-center px-8pxr py-2pxr cursor-pointer select-none outline-none">
-                      재생 속도
-                      <div className="ml-auto -mr-4pxr">
-                        <IconChevronRight size={18} />
-                      </div>
-                    </DropdownMenu.SubTrigger>
-                    <DropdownMenu.Portal>
-                      <DropdownMenu.SubContent
-                        sideOffset={2}
-                        className="w-120pxr rounded border bg-white overflow-hidden"
-                      >
-                        <div className="flex flex-col justify-center items-center p-8pxr">
-                          <input
-                            type="range"
-                            min="1.0"
-                            max="5.0"
-                            step="0.1"
-                            value={playbackRate}
-                            onChange={(event) => handlePlaybackRate(Number(event.target.value))}
-                            style={{ writingMode: 'vertical-lr', direction: 'rtl' }}
-                          />
-                          <span>{playbackRate.toFixed(1)} 배속</span>
-                        </div>
-                      </DropdownMenu.SubContent>
-                    </DropdownMenu.Portal>
-                  </DropdownMenu.Sub>
-                  <DropdownMenu.Arrow className="fill-gray-300" />
-                </DropdownMenu.Content>
-              </DropdownMenu.Portal>
-            </DropdownMenu.Root>
-          </div>
         </div>
       </div>
     </div>

@@ -9,11 +9,12 @@ const verseAtom = atom<number>(Number(window.electron.store.get('verse') || 1))
 const bibleDataAtom = atom<TBible[]>([])
 const voiceTypeAtom = atom<string>('남성')
 const bibleSoundTimeStampAtom = atom<TBibleSoundTimeStamp[]>([])
-const playingBibleAudio = atom<boolean>(false)
+const playingAudio = atom<boolean>(false)
+const playbackRate = atom<number>(1.0)
 const readingRangeAtom = atom<TReadingRange | null>(null)
 const currentReadingPositionAtom = atom<number | null>(null)
 const enableAutoScrollingAtom = atom<boolean>(false)
-const autoScrollingSpeedAtom = atom<number>(150.0)
+const autoScrollingSpeedAtom = atom<number>(1.0)
 
 const bibleBackgroundColorAtom = atom<string>(
   String(window.electron.store.get('bibleBackgroundColor') || '#fff')
@@ -67,10 +68,16 @@ export const readWriteVoiceTypeAtom = atom<string, string[], void>(
     window.electron.store.set('voiceType', newValue)
   }
 )
-export const readWritePlayingBibleAudio = atom<boolean, [boolean], void>(
-  (get) => get(playingBibleAudio),
+export const readWritePlayingAudio = atom<boolean, [boolean], void>(
+  (get) => get(playingAudio),
   (_, set, newValue) => {
-    set(playingBibleAudio, newValue)
+    set(playingAudio, newValue)
+  }
+)
+export const readWritePlaybackRate = atom<number, [number], void>(
+  (get) => get(playbackRate),
+  (_, set, newValue) => {
+    set(playbackRate, newValue)
   }
 )
 export const readWriteBibleSoundTimeStampAtom = atom<
