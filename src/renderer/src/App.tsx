@@ -37,7 +37,11 @@ const App = (): JSX.Element => {
   const { getFloatingProps } = useInteractions([dismiss])
 
   const copyToSelectedText = (): void => {
-    const selectedText = window.getSelection()?.toString().trim()
+    const selectedText = window
+      .getSelection()
+      ?.toString()
+      .replace(/(\r\n|\r|\n){2,}/g, '\n')
+      .replace(/(\d)(\r\n|\r|\n)/g, '$1 ')
     if (selectedText) {
       window.electron.copyText(selectedText)
     }
