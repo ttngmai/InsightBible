@@ -27,9 +27,9 @@ function Modal({ title, onClose, sx, children }: ModalProps): JSX.Element {
   }
 
   return (
-    <div className="fixed inset-0 block bg-black/[0.25]" onClick={handleOutsideClick}>
+    <div className="fixed inset-0 block bg-black/[0.25]" onMouseDown={handleOutsideClick}>
       <div
-        onClick={handleInsideClick}
+        onMouseDown={handleInsideClick}
         css={[
           tw`fixed inset-x-1/2 inset-y-1/2 -translate-x-1/2 -translate-y-1/2 w-fit h-fit max-w-[80%] overflow-hidden rounded-lg`,
           css`

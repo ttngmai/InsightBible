@@ -75,7 +75,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
               <th>
                 <div className="flex items-center gap-8pxr">
                   <IconPaint size={18} />
-                  <span>배경색</span>
+                  <span>배경 색</span>
                 </div>
               </th>
               <td>
@@ -114,7 +114,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
               <th>
                 <div className="flex items-center gap-8pxr">
                   <IconPalette size={18} />
-                  <span>글자색</span>
+                  <span>글자 색</span>
                 </div>
               </th>
               <td>
@@ -134,7 +134,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
               <th>
                 <div className="flex items-center gap-8pxr">
                   <IconHighlight size={18} />
-                  <span>강조색</span>
+                  <span>강조 색</span>
                 </div>
               </th>
               <td>
@@ -203,7 +203,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
               <th>
                 <div className="flex items-center gap-8pxr">
                   <IconChevronsRight size={18} />
-                  <span className="font-bold">재생 속도</span>
+                  <span className="font-bold">보는 속도</span>
                 </div>
               </th>
               <td>
@@ -234,7 +234,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
       {openBibleBackgroundColorPickerModal && (
         <ModalPortal>
           <ColorPickerModal
-            title="배경색 선택"
+            title="배경 색 선택"
             defaultColor={bibleBackgroundColor}
             onColorSelect={(color: string) => {
               setBibleBackgroundColor(color)
@@ -247,7 +247,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
       {openBibleTextColorPickerModal && (
         <ModalPortal>
           <ColorPickerModal
-            title="글자색 선택"
+            title="글자 색 선택"
             defaultColor={bibleTextColor}
             onColorSelect={(color: string) => {
               setBibleTextColor(color)
@@ -260,7 +260,7 @@ function SettingsModal({ onClose }: SettingsModalProps): JSX.Element {
       {openCurrentReadingTextColorPickerModal && (
         <ModalPortal>
           <ColorPickerModal
-            title="강조색 선택"
+            title="강조 색 선택"
             defaultColor={currentReadingTextColor || bibleTextColor}
             onColorSelect={(color: string) => {
               setCurrentReadingTextColor(color)

@@ -20,7 +20,7 @@ function ColorPickerModal({
   const [currentColor, setCurrentColor] = useState<string>(defaultColor)
 
   return (
-    <Modal title={title} onClose={onClose} sx={tw`w-360pxr`}>
+    <Modal title={title} onClose={onClose} sx={tw`w-300pxr`}>
       <div className="p-16pxr bg-white select-none">
         <div className="flex justify-center mb-16pxr">
           <ChromePicker
