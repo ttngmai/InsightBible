@@ -157,7 +157,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
           <Slider.Thumb className="block w-10pxr h-10pxr rounded-full bg-white shadow-[0_1px_4px] cursor-pointer focus:outline-none" />
         </Slider.Root>
         <div className="flex justify-between items-center">
-          <div className="flex -ml-10pxr">
+          <div className="flex -ml-8pxr">
             <Button type="button" onClick={handlePlayOrPause} variant="ghost" size="icon">
               {playing ? <IconPlayerPause size={24} /> : <IconPlayerPlay size={24} />}
             </Button>
@@ -179,7 +179,7 @@ function BibleAudioPlayer({ url, onProgress }: BibleAudioPlayerProps): JSX.Eleme
               </Slider.Root>
             </div>
           </div>
-          <span className="text-[18px]">
+          <span className="text-[18px] mr-1pxr">
             {formatTime(currentTime / playbackRate)} / {formatTime(duration / playbackRate)}
           </span>
         </div>
